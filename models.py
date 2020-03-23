@@ -40,3 +40,10 @@ class Category(Base):
         return self.name
 
 
+class Tag(Base):
+    name = models.CharField(max_length=80)
+
+    def __str__(self):
+        return self.name
+
+
