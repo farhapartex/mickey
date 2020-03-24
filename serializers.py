@@ -3,9 +3,19 @@ from .models import *
 
 
 class CategoryMinimalSerializer(serializers.ModelSerializer):
+    parent = serializers.SerializerMethodField()
+
+    def get_parent(self, model):
+        if model.parent is None:
+            return None
+        else:
+            return {
+                "id" : model.parent.id,
+                "name" : model.parent.name
+            }
     class Meta:
         model = Category
-        fields = ("id", "name")
+        fields = ("id", "name", "parent")
 
 class CategorySerializer(serializers.ModelSerializer):
     parent = CategoryMinimalSerializer(read_only=True)
@@ -16,3 +26,13 @@ class CategorySerializer(serializers.ModelSerializer):
         extra_kwargs = {
             "parent_id" : {"write_only" : True}
         }
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = "__all__"
+
+class TagMinimalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ("id", "name")
