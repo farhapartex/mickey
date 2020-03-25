@@ -51,8 +51,9 @@ class Blog(Base):
     category = models.ForeignKey(Category, verbose_name=_("Category"), related_name="blogs", on_delete=models.SET_NULL, blank=True, null=True)
     tags = models.ManyToManyField(Tag, verbose_name=_("Tag"))
     title = models.CharField(_("Title"), max_length=150)
-    slug = models.SlugField(_("Slug"), blank=True, null=True)
+    slug = models.SlugField(_("Slug"), max_length=180, blank=True, null=True)
     content = models.TextField(_("Content"))
+    short_content = models.TextField(_("Short Content"), blank=True, null=True)
     published = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
@@ -60,6 +61,9 @@ class Blog(Base):
             self.slug = slugify(self.title)
         else:
             self.slug = slugify(self.slug)
+        
+        if not self.short_content:
+            self.short_content = self.content[:150]
         super(Blog, self).save(*args, **kwargs)
         
 

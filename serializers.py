@@ -45,14 +45,10 @@ class BlogSerializer(serializers.ModelSerializer):
         fields = ("id", "title", "slug", "tags", "content")
 
 class BlogMinimalSerializer(serializers.HyperlinkedModelSerializer):
-    short_text = serializers.SerializerMethodField()
-
-    def get_short_text(self, model):
-        return model.content[:150]
 
     class Meta:
         model = Blog
-        fields = ("id","url","title", "short_text",)
+        fields = ("id","url","title", "short_content",)
         lookup_field = 'slug'
         extra_kwargs = {
             'url': {'lookup_field': 'slug'}
