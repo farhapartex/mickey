@@ -2,7 +2,11 @@ from django.shortcuts import render
 from rest_framework import views, viewsets, generics
 from .models import *
 from .serializers import *
+import logging
 # Create your views here.
+
+logger = logging.getLogger(__name__)
+
 
 class CategoryAPIView(viewsets.ReadOnlyModelViewSet):
     queryset = Category.objects.all()
@@ -28,4 +32,10 @@ class BlogPublishedAPIView(viewsets.ReadOnlyModelViewSet):
         return BlogMinimalSerializer if self.action == "list" else BlogSerializer
     
     def get_queryset(self):
-        return Blog.objects.filter(published=True, archive=False)
+        post_type, query = self.request.GET['type'], None
+        if not post_type or post_type == "published":
+            query = Blog.objects.filter(published=True, archive=False)
+        else:
+            query =  Blog.objects.filter(published=True, archive=True)
+        
+        return query
