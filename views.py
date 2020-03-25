@@ -26,3 +26,6 @@ class BlogReadOnlyAPIView(viewsets.ReadOnlyModelViewSet):
 
     def get_serializer_class(self):
         return BlogMinimalSerializer if self.action == "list" else BlogSerializer
+    
+    def get_queryset(self):
+        return Blog.objects.filter(published=True)
