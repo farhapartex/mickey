@@ -32,10 +32,13 @@ class BlogPublishedAPIView(viewsets.ReadOnlyModelViewSet):
         return BlogMinimalSerializer if self.action == "list" else BlogSerializer
     
     def get_queryset(self):
-        post_type, query = self.request.GET['type'], None
-        if not post_type or post_type == "published":
-            query = Blog.objects.filter(published=True, archive=False)
-        else:
-            query =  Blog.objects.filter(published=True, archive=True)
-        
-        return query
+        try:
+            post_type, query = self.request.GET['type'], None
+            if not post_type or post_type == "published":
+                query = Blog.objects.filter(published=True, archive=False)
+            else:
+                query =  Blog.objects.filter(published=True, archive=True)
+            
+            return query
+        except:
+            return Blog.objects.filter(published=True, archive=False)
