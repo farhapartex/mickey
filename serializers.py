@@ -53,10 +53,12 @@ class BlogSerializer(serializers.ModelSerializer):
         fields = "__all__"
 
 class BlogMinimalSerializer(serializers.HyperlinkedModelSerializer):
+    created_by = UserMiniSerializer(read_only=True)
+    tags = TagMinimalSerializer(read_only=True, many=True)
 
     class Meta:
         model = Blog
-        fields = ("id","url","title", "short_content", "cover_image")
+        fields = ("id","url","title", "tags","slug", "short_content", "cover_image", "created_by", "created_at")
         lookup_field = 'slug'
         extra_kwargs = {
             'url': {'lookup_field': 'slug'}
