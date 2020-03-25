@@ -58,6 +58,7 @@ class Blog(Base):
     short_content = models.TextField(_("Short Content"), blank=True, null=True)
     cover_image = models.ImageField(_("Cover Image"), storage=fs, blank=True, null=True)
     published = models.BooleanField(default=True)
+    archive = models.BooleanField(_("Archive"), default=False)
 
     def save(self, *args, **kwargs):
         if not self.slug:

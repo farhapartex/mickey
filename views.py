@@ -19,7 +19,7 @@ class TagReadOnlyAPIView(viewsets.ReadOnlyModelViewSet):
         return TagMinimalSerializer if self.action == "list" else TagSerializer
 
 
-class BlogReadOnlyAPIView(viewsets.ReadOnlyModelViewSet):
+class BlogPublishedAPIView(viewsets.ReadOnlyModelViewSet):
     queryset = Blog.objects.all()
     serializer_class = BlogSerializer
     lookup_field = 'slug'
@@ -28,4 +28,4 @@ class BlogReadOnlyAPIView(viewsets.ReadOnlyModelViewSet):
         return BlogMinimalSerializer if self.action == "list" else BlogSerializer
     
     def get_queryset(self):
-        return Blog.objects.filter(published=True)
+        return Blog.objects.filter(published=True, archive=False)
