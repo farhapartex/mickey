@@ -1,6 +1,12 @@
+from django.conf import settings
 from rest_framework import serializers
 from .models import *
 
+
+class UserMiniSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = USER_MODEL
+        fields = ("id", "username",)
 
 class CategoryMinimalSerializer(serializers.ModelSerializer):
     parent = serializers.SerializerMethodField()
@@ -36,3 +42,24 @@ class TagMinimalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = ("id", "name")
+
+
+class BlogSerializer(serializers.ModelSerializer):
+    created_by = UserMiniSerializer(read_only=True)
+    updated_by = UserMiniSerializer(read_only=True)
+
+    class Meta:
+        model = Blog
+        fields = "__all__"
+
+class BlogMinimalSerializer(serializers.HyperlinkedModelSerializer):
+    created_by = UserMiniSerializer(read_only=True)
+    tags = TagMinimalSerializer(read_only=True, many=True)
+
+    class Meta:
+        model = Blog
+        fields = ("id","url","title", "tags","slug", "short_content", "cover_image", "created_by", "created_at")
+        lookup_field = 'slug'
+        extra_kwargs = {
+            'url': {'lookup_field': 'slug'}
+        }
