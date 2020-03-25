@@ -1,12 +1,14 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
+from django.contrib.auth import get_user_model
 from django.utils.text import slugify
 from .utils import *
+from .files import *
 import logging
 # Create your models here.
 
-USER_MODEL = settings.AUTH_USER_MODEL
+USER_MODEL = get_user_model()
 
 class Base(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -54,6 +56,7 @@ class Blog(Base):
     slug = models.SlugField(_("Slug"), max_length=180, blank=True, null=True)
     content = models.TextField(_("Content"))
     short_content = models.TextField(_("Short Content"), blank=True, null=True)
+    cover_image = models.ImageField(_("Cover Image"), storage=fs, blank=True, null=True)
     published = models.BooleanField(default=True)
 
     def save(self, *args, **kwargs):
