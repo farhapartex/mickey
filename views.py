@@ -13,7 +13,16 @@ class CategoryAPIView(viewsets.ReadOnlyModelViewSet):
 
 class TagReadOnlyAPIView(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
-    serializers = TagSerializer
+    serializer_class = TagSerializer
 
     def get_serializer_class(self):
         return TagMinimalSerializer if self.action == "list" else TagSerializer
+
+
+class BlogReadOnlyAPIView(viewsets.ReadOnlyModelViewSet):
+    queryset = Blog.objects.all()
+    serializer_class = BlogSerializer
+    lookup_field = 'slug'
+
+    def get_serializer_class(self):
+        return BlogMinimalSerializer if self.action == "list" else BlogSerializer

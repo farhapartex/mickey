@@ -36,3 +36,19 @@ class TagMinimalSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = ("id", "name")
+
+
+class BlogSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Blog
+        fields = ("id", "title", "slug", "tags", "content")
+
+class BlogMinimalSerializer(serializers.HyperlinkedModelSerializer):
+    class Meta:
+        model = Blog
+        fields = ("id","url","title", "slug",)
+        lookup_field = 'slug'
+        extra_kwargs = {
+            'url': {'lookup_field': 'slug'}
+        }

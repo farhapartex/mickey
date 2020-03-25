@@ -1,6 +1,7 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
+from django.utils.text import slugify
 from .utils import *
 import logging
 # Create your models here.
@@ -45,5 +46,25 @@ class Tag(Base):
 
     def __str__(self):
         return self.name
+
+class Blog(Base):
+    category = models.ForeignKey(Category, verbose_name=_("Category"), related_name="blogs", on_delete=models.SET_NULL, blank=True, null=True)
+    tags = models.ManyToManyField(Tag, verbose_name=_("Tag"))
+    title = models.CharField(_("Title"), max_length=150)
+    slug = models.SlugField(_("Slug"), blank=True, null=True)
+    content = models.TextField(_("Content"))
+    published = models.BooleanField(default=True)
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(self.title)
+        else:
+            self.slug = slugify(self.slug)
+        super(Blog, self).save(*args, **kwargs)
+        
+
+    def __str__(self):
+        return self.title
+        
 
 
