@@ -14,3 +14,8 @@ class CategoryAdmin(admin.ModelAdmin):
 class BlogAdmin(admin.ModelAdmin):
     list_display = ("title", "category", "published", "archive", "created_by")
     search_fields = ['title','category__name','published']
+
+@admin.register(React)
+class ReactAdmin(admin.ModelAdmin):
+    list_display = ("id","blog", "type", "amount",)
+    search_fields = ['blog__title', 'type']

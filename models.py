@@ -8,6 +8,7 @@ from .files import *
 import logging
 # Create your models here.
 
+logger = logging.getLogger(__name__)
 USER_MODEL = get_user_model()
 
 class Base(models.Model):
@@ -56,7 +57,7 @@ class Blog(Base):
     slug = models.SlugField(_("Slug"), max_length=180, blank=True, null=True)
     content = models.TextField(_("Content"))
     short_content = models.TextField(_("Short Content"), blank=True, null=True)
-    cover_image = models.ImageField(_("Cover Image"), storage=fs, blank=True, null=True)
+    cover_image = models.ImageField(_("Cover Image"), storage=fs,upload_to=blog_image_upload_path, blank=True, null=True)
     published = models.BooleanField(default=True)
     archive = models.BooleanField(_("Archive"), default=False)
 
@@ -69,10 +70,25 @@ class Blog(Base):
         if not self.short_content:
             self.short_content = self.content[:150]
         super(Blog, self).save(*args, **kwargs)
+        instance = Blog.objects.get(id=self.id)
+        REACTS = ['like', 'dislike', 'love', 'angry', 'wow']
+        if React.objects.filter(blog=instance).exists() == False:
+            for react in REACTS:
+                React.objects.create(blog=instance, type=react, amount=0)
         
 
     def __str__(self):
         return self.title
+
+
+REACT_CHOICES = (("like", "like"), ("dislike", "Dislike"), ("love", "Love"), ("angry", "Angry"), ("wow", "Wow"))
+class React(Base):
+    blog = models.ForeignKey(Blog, related_name="reacts", on_delete=models.CASCADE)
+    type = models.CharField(_("React Type"), choices=REACT_CHOICES, max_length=10)
+    amount = models.IntegerField()
+
+    def __str__(self):
+        return self.blog.title
         
 
 
