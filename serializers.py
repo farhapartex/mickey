@@ -44,11 +44,34 @@ class TagMinimalSerializer(serializers.ModelSerializer):
         model = Tag
         fields = ("id", "name")
 
+class ReactSerializer(serializers.ModelSerializer):
+
+    def create(self, validate_data):
+        validate_data['amount'] = 0
+        return React.objects.create(**validate_data)
+
+    def update(self, instance, validated_data):
+        instance.amount = instance.amount + 1
+        instance.save()
+        return instance
+        
+    class Meta:
+        model = React
+        fields = ("id", "blog", "type", "amount")
+        extra_kwargs = {
+            "amount" : {"read_only": True}
+        }
+
 
 class ReactMinimalSerializer(serializers.ModelSerializer):
     class Meta:
         model = React
         fields = ("type", "amount")
+
+class ReactFlatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = React
+        fields = ("id","type", "amount")
 
 
 class BlogSerializer(serializers.ModelSerializer):
@@ -59,9 +82,7 @@ class BlogSerializer(serializers.ModelSerializer):
     class Meta:
         model = Blog
         fields = "__all__"
-        # extra_kwargs = {
-        #     "reacts" : {"read_only": True}
-        # }
+        
 
 class BlogMinimalSerializer(serializers.HyperlinkedModelSerializer):
     created_by = UserMiniSerializer(read_only=True)
