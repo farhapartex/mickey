@@ -73,6 +73,16 @@ class Blog(Base):
 
     def __str__(self):
         return self.title
+
+
+REACT_CHOICES = (("like", "like"), ("dislike", "Dislike"), ("love", "Love"), ("angry", "Angry"), ("wow", "Wow"))
+class React(Base):
+    blog = models.ForeignKey(Blog, related_name="reacts", on_delete=models.CASCADE)
+    type = models.CharField(_("React Type"), choices=REACT_CHOICES, max_length=10)
+    amount = models.IntegerField()
+
+    def __str__(self):
+        return self.blog.title
         
 
 
