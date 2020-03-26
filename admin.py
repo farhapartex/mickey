@@ -17,5 +17,5 @@ class BlogAdmin(admin.ModelAdmin):
 
 @admin.register(React)
 class ReactAdmin(admin.ModelAdmin):
-    list_display = ("blog", "type", "amount",)
-    search_fields = ['blog__title',]
+    list_display = ("id","blog", "type", "amount",)
+    search_fields = ['blog__title', 'type']

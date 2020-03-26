@@ -8,6 +8,7 @@ from .files import *
 import logging
 # Create your models here.
 
+logger = logging.getLogger(__name__)
 USER_MODEL = get_user_model()
 
 class Base(models.Model):
@@ -69,6 +70,11 @@ class Blog(Base):
         if not self.short_content:
             self.short_content = self.content[:150]
         super(Blog, self).save(*args, **kwargs)
+        instance = Blog.objects.get(id=self.id)
+        REACTS = ['like', 'dislike', 'love', 'angry', 'wow']
+        if React.objects.filter(blog=instance).exists() == False:
+            for react in REACTS:
+                React.objects.create(blog=instance, type=react, amount=0)
         
 
     def __str__(self):
