@@ -54,13 +54,14 @@ class ReactMinimalSerializer(serializers.ModelSerializer):
 class BlogSerializer(serializers.ModelSerializer):
     created_by = UserMiniSerializer(read_only=True)
     updated_by = UserMiniSerializer(read_only=True)
+    reacts = ReactMinimalSerializer(read_only=True, many=True)
 
     class Meta:
         model = Blog
         fields = "__all__"
-        extra_kwargs = {
-            "reacts" : {"read_only": True}
-        }
+        # extra_kwargs = {
+        #     "reacts" : {"read_only": True}
+        # }
 
 class BlogMinimalSerializer(serializers.HyperlinkedModelSerializer):
     created_by = UserMiniSerializer(read_only=True)
