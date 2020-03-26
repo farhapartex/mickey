@@ -1,4 +1,5 @@
 from django.conf import settings
+from django.db.models import Sum
 from rest_framework import serializers
 from .models import *
 
@@ -44,6 +45,12 @@ class TagMinimalSerializer(serializers.ModelSerializer):
         fields = ("id", "name")
 
 
+class ReactMinimalSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = React
+        fields = ("type", "amount")
+
+
 class BlogSerializer(serializers.ModelSerializer):
     created_by = UserMiniSerializer(read_only=True)
     updated_by = UserMiniSerializer(read_only=True)
@@ -51,15 +58,25 @@ class BlogSerializer(serializers.ModelSerializer):
     class Meta:
         model = Blog
         fields = "__all__"
+        extra_kwargs = {
+            "reacts" : {"read_only": True}
+        }
 
 class BlogMinimalSerializer(serializers.HyperlinkedModelSerializer):
     created_by = UserMiniSerializer(read_only=True)
     tags = TagMinimalSerializer(read_only=True, many=True)
+    reacts = serializers.SerializerMethodField()
+
+    def get_reacts(self, model):
+        return {
+            "total" : React.objects.filter(blog=model).aggregate(Sum('amount'))['amount__sum']
+        }
+
 
     class Meta:
         model = Blog
-        fields = ("id","url","title", "tags","slug", "short_content", "cover_image", "created_by", "created_at")
+        fields = ("id","url","title", "tags","slug", "reacts", "short_content", "cover_image", "created_by", "created_at")
         lookup_field = 'slug'
         extra_kwargs = {
-            'url': {'lookup_field': 'slug'}
+            'url': {'lookup_field': 'slug'},
         }
