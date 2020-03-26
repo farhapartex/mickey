@@ -42,3 +42,20 @@ class BlogPublishedAPIView(viewsets.ReadOnlyModelViewSet):
             return query
         except:
             return Blog.objects.filter(published=True, archive=False)
+
+
+class ReactAPIView(viewsets.ModelViewSet):
+    queryset = React.objects.all()
+    serializer_class = ReactSerializer
+
+    def get_queryset(self):
+        try:
+            if not self.request.GET['bid']:
+                return React.objects.all()
+            elif React.objects.filter(blog__id=int(self.request.GET['bid'])).exists():
+                return React.objects.filter(blog__id=self.request.GET['bid'])
+        except:
+            return React.objects.all()
+    
+    def get_serializer_class(self):
+        return ReactFlatSerializer if self.action == "list" else ReactSerializer
