@@ -56,7 +56,7 @@ class Blog(Base):
     slug = models.SlugField(_("Slug"), max_length=180, blank=True, null=True)
     content = models.TextField(_("Content"))
     short_content = models.TextField(_("Short Content"), blank=True, null=True)
-    cover_image = models.ImageField(_("Cover Image"), storage=fs, blank=True, null=True)
+    cover_image = models.ImageField(_("Cover Image"), storage=fs,upload_to=blog_image_upload_path, blank=True, null=True)
     published = models.BooleanField(default=True)
     archive = models.BooleanField(_("Archive"), default=False)
 
