@@ -43,28 +43,12 @@ class Media(Base):
     def save(self, *args, **kwargs):
         MID_THUMB_SIZE = (768, 1024)
         SM_THUMB_SIZE = (264, 300)
-        image = Image.open(self.cover_image)
-        image.resize(MID_THUMB_SIZE)
-        output = BytesIO()
-        image_name, image_extension = os.path.splitext(self.cover_image.name)
-        image_extension = image_extension.lower()
-        image_name = image_name + str(768) +"x"+ str(1024) + image_extension
-
-        if image_extension in ['.jpg', '.jpeg']:
-            FTYPE = 'JPEG'
-        elif image_extension == '.gif':
-            FTYPE = 'GIF'
-        elif image_extension == '.png':
-            FTYPE = 'PNG'
-
-        image.save(output, FTYPE, quality=100)
-        output.seek(0)
-        self.m_cover_image = InMemoryUploadedFile(output,'ImageField', "%s.jpg" %image_name, 'image/jpeg', sys.getsizeof(output), None)
+        if not self.m_cover_image:
+            self.m_cover_image = DynamicImageResize(768, 1024, self.cover_image).get_resize_image()
+        if not self.sm_cover_image:
+            self.sm_cover_image = DynamicImageResize(264, 300, self.cover_image).get_resize_image()
 
         super(Media, self).save(*args, **kwargs)
-        # instance = Media.objects.get(id=self.id)
-        # DynamicImageResize(110, 150, self.cover_image, self.m_cover_image).make_thumbnail()
-        # self.save()
     
     def __str__(self):
         return self.cover_image.name
