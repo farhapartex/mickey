@@ -8,10 +8,10 @@ settings.MEDIA_ROOT = os.path.join(SYS_BASE_DIR, "media/images/")
 fs = FileSystemStorage(location="media/images/")
 
 def cover_image_upload_path(instance, filename):
-    return "full/{0}/{1}".format(instance.id, filename)
+    return "full/{1}".format(instance.id, filename)
 
 def m_cover_image_upload_path(instance, filename):
-    return "medium/{0}/{1}".format(instance.id, filename)
+    return "medium/{1}".format(instance.id, filename)
 
 def sm_cover_image_upload_path(instance, filename):
-    return "small/{0}/{1}".format(instance.id, filename)
+    return "small/{1}".format(instance.id, filename)

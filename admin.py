@@ -4,7 +4,7 @@ from .models import *
 
 @admin.register(Media)
 class MediaAdmin(admin.ModelAdmin):
-    list_display = ("id", "cover_image", "created_by", "created_at")
+    list_display = ("id", "cover_image","m_cover_image", "created_by", "created_at")
 
 @admin.register(Category)
 class CategoryAdmin(admin.ModelAdmin):

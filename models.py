@@ -1,12 +1,15 @@
 from django.db import models
 from django.utils.translation import ugettext_lazy as _
+from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils.text import slugify
+from PIL import Image
+from io import BytesIO
 from .media import DynamicImageResize
 from .utils import *
 from .files import *
-import logging
+import logging, sys
 # Create your models here.
 
 logger = logging.getLogger(__name__)
@@ -38,14 +41,30 @@ class Media(Base):
     sm_cover_image = models.ImageField(_("Small Cover Image"), storage=fs,upload_to=sm_cover_image_upload_path, blank=True, null=True)
 
     def save(self, *args, **kwargs):
+        MID_THUMB_SIZE = (768, 1024)
+        SM_THUMB_SIZE = (264, 300)
+        image = Image.open(self.cover_image)
+        image.resize(MID_THUMB_SIZE)
+        output = BytesIO()
+        image_name, image_extension = os.path.splitext(self.cover_image.name)
+        image_extension = image_extension.lower()
+        image_name = image_name + str(768) +"x"+ str(1024) + image_extension
+
+        if image_extension in ['.jpg', '.jpeg']:
+            FTYPE = 'JPEG'
+        elif image_extension == '.gif':
+            FTYPE = 'GIF'
+        elif image_extension == '.png':
+            FTYPE = 'PNG'
+
+        image.save(output, FTYPE, quality=100)
+        output.seek(0)
+        self.m_cover_image = InMemoryUploadedFile(output,'ImageField', "%s.jpg" %image_name, 'image/jpeg', sys.getsizeof(output), None)
 
         super(Media, self).save(*args, **kwargs)
-        instance = Media.objects.get(id=self.id)
-        isn = DynamicImageResize(110, 150, self.cover_image, self.m_cover_image).make_thumbnail()
-
-        # if not DynamicImageResize(110, 150, self.cover_image, self.m_cover_image).make_thumbnail():
-        #         raise Exception('Could not create thumbnail - is the file type valid?')
-        
+        # instance = Media.objects.get(id=self.id)
+        # DynamicImageResize(110, 150, self.cover_image, self.m_cover_image).make_thumbnail()
+        # self.save()
     
     def __str__(self):
         return self.cover_image.name
