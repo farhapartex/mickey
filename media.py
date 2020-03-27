@@ -2,49 +2,48 @@ from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage as storage
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from PIL import Image
-from io import BytesIO
+from io import BytesIO, StringIO
 import os, sys
 
 
 class DynamicImageResize(object):
-    def __init__(self, width, height, image_field):
+    def __init__(self, width, height, image_field, resize_field):
 
         self.width = width
         self.height = height
         self.image_field = image_field
+        self.thumbnail_field = resize_field
+    
+    
+    def make_thumbnail(self):
+        THUMB_SIZE = (self.width, self.height)
 
-    def get_resize_image(self):
-
-        IMAGE_SIZE = (self.width, self.height)
-        file = storage.open(self.image_field.name, "r")
+        fh = storage.open(self.image_field.name, 'r') 
         try:
-            image = Image.open(file)
+            image = Image.open(self.image_field)
         except:
             return False
-        
-        image.resize(IMAGE_SIZE, Image.ANTIALIAS)
-        file.close()
 
-        resize_image_name, resize_image_extension = os.path.splitext(self.image_field.name)
-        resize_image_extension = resize_image_extension.lower()
-        resize_image_name = resize_image_name + "_" + str(self.width) + "x" + str(self.height) + resize_image_extension
+        image.thumbnail(THUMB_SIZE, Image.ANTIALIAS)
+        fh.close()
 
-        FTYPE = ""
+        thumb_name, thumb_extension = os.path.splitext(self.image_field.name)
+        thumb_extension = thumb_extension.lower()
+        thumb_filename = thumb_name + str(self.width) +"x"+ str(self.height) + thumb_extension
 
-        if resize_image_extension in ['.jpg', '.jpeg']:
+        if thumb_extension in ['.jpg', '.jpeg']:
             FTYPE = 'JPEG'
-        elif resize_image_extension == '.gif':
+        elif thumb_extension == '.gif':
             FTYPE = 'GIF'
-        elif resize_image_extension == '.png':
+        elif thumb_extension == '.png':
             FTYPE = 'PNG'
         else:
             return False
 
-        
-        resize_image = BytesIO()
-        image.save(resize_image, format=FTYPE, quality=100)
-        resize_image.seek(0)
-        # self.thumbnail_field.save(resize_image_name, ContentFile(resize_image.read()), save=False)
-        resize_image.close()
+        temp_thumb = BytesIO()
+        image.save(temp_thumb, FTYPE)
+        temp_thumb.seek(0)
+        self.thumbnail_field.save(thumb_filename, ContentFile(temp_thumb.read()), save=False)
+        temp_thumb.close()
 
-        return InMemoryUploadedFile(resize_image,'ImageField', resize_image_name, 'image/jpeg', sys.getsizeof(resize_image), None)
+        return True

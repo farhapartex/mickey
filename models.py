@@ -33,17 +33,19 @@ class Base(models.Model):
         abstract = True
 
 class Media(Base):
-    cover_image = models.ImageField(_("Cover Image"), storage=fs,upload_to=cover_image_upload_path, blank=True, null=True)
+    cover_image = models.ImageField(_("Cover Image"), storage=fs,upload_to=cover_image_upload_path)
     m_cover_image = models.ImageField(_("Medium Cover Image"), storage=fs,upload_to=m_cover_image_upload_path, blank=True, null=True)
     sm_cover_image = models.ImageField(_("Small Cover Image"), storage=fs,upload_to=sm_cover_image_upload_path, blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        
-        if not self.id:
-            self.m_cover_image = DynamicImageResize(768,1024, self.cover_image).get_resize_image()
-            self.sm_cover_image = DynamicImageResize(360,640, self.cover_image).get_resize_image()
 
-        super(Blog, self).save(*args, **kwargs)
+        super(Media, self).save(*args, **kwargs)
+        instance = Media.objects.get(id=self.id)
+        isn = DynamicImageResize(110, 150, self.cover_image, self.m_cover_image).make_thumbnail()
+
+        # if not DynamicImageResize(110, 150, self.cover_image, self.m_cover_image).make_thumbnail():
+        #         raise Exception('Could not create thumbnail - is the file type valid?')
+        
     
     def __str__(self):
         return self.cover_image.name
