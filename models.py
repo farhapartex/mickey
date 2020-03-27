@@ -3,6 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.utils.text import slugify
+from .media import DynamicImageResize
 from .utils import *
 from .files import *
 import logging
@@ -31,6 +32,21 @@ class Base(models.Model):
     class Meta:
         abstract = True
 
+class Media(Base):
+    cover_image = models.ImageField(_("Cover Image"), storage=fs,upload_to=cover_image_upload_path, blank=True, null=True)
+    m_cover_image = models.ImageField(_("Medium Cover Image"), storage=fs,upload_to=m_cover_image_upload_path, blank=True, null=True)
+    sm_cover_image = models.ImageField(_("Small Cover Image"), storage=fs,upload_to=sm_cover_image_upload_path, blank=True, null=True)
+
+    def save(self, *args, **kwargs):
+        
+        if not self.id:
+            self.m_cover_image = DynamicImageResize(768,1024, self.cover_image).get_resize_image()
+            self.sm_cover_image = DynamicImageResize(360,640, self.cover_image).get_resize_image()
+
+        super(Blog, self).save(*args, **kwargs)
+    
+    def __str__(self):
+        return self.cover_image.name
 
 class Category(Base):
     name = models.CharField(max_length=150)
@@ -57,7 +73,9 @@ class Blog(Base):
     slug = models.SlugField(_("Slug"), max_length=180, blank=True, null=True)
     content = models.TextField(_("Content"))
     short_content = models.TextField(_("Short Content"), blank=True, null=True)
-    cover_image = models.ImageField(_("Cover Image"), storage=fs,upload_to=blog_image_upload_path, blank=True, null=True)
+    cover_image = models.ImageField(_("Cover Image"), storage=fs,upload_to=cover_image_upload_path, blank=True, null=True)
+    m_cover_image = models.ImageField(_("Medium Cover Image"), storage=fs,upload_to=m_cover_image_upload_path, blank=True, null=True)
+    sm_cover_image = models.ImageField(_("Small Cover Image"), storage=fs,upload_to=sm_cover_image_upload_path, blank=True, null=True)
     published = models.BooleanField(default=True)
     archive = models.BooleanField(_("Archive"), default=False)
 
@@ -69,6 +87,11 @@ class Blog(Base):
         
         if not self.short_content:
             self.short_content = self.content[:150]
+        
+        if not self.id:
+            self.m_cover_image = DynamicImageResize(768,1024, self.cover_image).get_resize_image()
+            self.sm_cover_image = DynamicImageResize(360,640, self.cover_image).get_resize_image()
+
         super(Blog, self).save(*args, **kwargs)
         instance = Blog.objects.get(id=self.id)
         REACTS = ['like', 'dislike', 'love', 'angry', 'wow']
