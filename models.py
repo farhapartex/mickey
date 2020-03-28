@@ -72,17 +72,15 @@ class Tag(Base):
         return self.name
 
 class Blog(Base):
-    category = models.ForeignKey(Category, verbose_name=_("Category"), related_name="blogs", on_delete=models.SET_NULL, blank=True, null=True)
+    category = models.ForeignKey(Category, verbose_name=_("Category"), related_name="blogs", on_delete=models.CASCADE)
     tags = models.ManyToManyField(Tag, verbose_name=_("Tag"))
     title = models.CharField(_("Title"), max_length=150)
     slug = models.SlugField(_("Slug"), max_length=180, blank=True, null=True)
     content = models.TextField(_("Content"))
     short_content = models.TextField(_("Short Content"), blank=True, null=True)
-    cover_image = models.ImageField(_("Cover Image"), storage=fs,upload_to=cover_image_upload_path, blank=True, null=True)
-    m_cover_image = models.ImageField(_("Medium Cover Image"), storage=fs,upload_to=m_cover_image_upload_path, blank=True, null=True)
-    sm_cover_image = models.ImageField(_("Small Cover Image"), storage=fs,upload_to=sm_cover_image_upload_path, blank=True, null=True)
-    published = models.BooleanField(default=True)
+    cover_image = models.ForeignKey(Media, verbose_name=_("Cover Image"), on_delete=models.SET_NULL, blank=True, null=True)
     archive = models.BooleanField(_("Archive"), default=False)
+    published = models.BooleanField(_("published"), default=True)
 
     def save(self, *args, **kwargs):
         if not self.slug:
@@ -92,10 +90,6 @@ class Blog(Base):
         
         if not self.short_content:
             self.short_content = self.content[:150]
-        
-        if not self.id:
-            self.m_cover_image = DynamicImageResize(768,1024, self.cover_image).get_resize_image()
-            self.sm_cover_image = DynamicImageResize(360,640, self.cover_image).get_resize_image()
 
         super(Blog, self).save(*args, **kwargs)
         instance = Blog.objects.get(id=self.id)

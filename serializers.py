@@ -88,6 +88,9 @@ class BlogMinimalSerializer(serializers.HyperlinkedModelSerializer):
     created_by = UserMiniSerializer(read_only=True)
     tags = TagMinimalSerializer(read_only=True, many=True)
     reacts = serializers.SerializerMethodField()
+    cover_image = serializers.ImageField(
+            max_length = None, use_url=True
+        )
 
     def get_reacts(self, model):
         return {
