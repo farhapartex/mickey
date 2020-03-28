@@ -61,11 +61,12 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    fields = (('category','archive', 'published'),('title', 'slug'), 'content','short_content', ('cover_image',))
+    fields = (('category','archive', 'published'),('cover_image','image_tag'),('title', 'slug'), 'content','short_content',)
     list_display = ("title", "category", "published", "archive", "created_by", "created_at")
     search_fields = ['title','category__name','published']
     list_filter = ('category__name', 'published', 'archive','created_at')
     actions = ['make_archive','remove_archive','publish_post','unpublish_post']
+    readonly_fields = ('image_tag',)
 
     def make_archive(self, request, queryset):
         rows_updated = queryset.update(archive=True)
@@ -83,6 +84,14 @@ class PostAdmin(admin.ModelAdmin):
         rows_updated = queryset.update(published=True)
         self.message_user(request, "%s published successfully." % get_message_bit(rows_updated,'post'))
     
+    def image_tag(self, obj):
+        try:
+            return format_html('<img src="{}" width="160" height="135"/>'.format(obj.cover_image.image.url))
+        except:
+            return ""
+        
+
+    image_tag.short_description = 'Post Image'
     make_archive.short_description = "Archive selected post"
     remove_archive.short_description = "Publish selected post from archive"
     publish_post.short_description = "Publish selected post"
