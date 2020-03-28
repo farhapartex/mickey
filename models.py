@@ -36,22 +36,22 @@ class Base(models.Model):
         abstract = True
 
 class Media(Base):
-    cover_image = models.ImageField(_("Cover Image"), storage=fs,upload_to=cover_image_upload_path)
-    m_cover_image = models.ImageField(_("Medium Cover Image"), storage=fs,upload_to=m_cover_image_upload_path, blank=True, null=True)
-    sm_cover_image = models.ImageField(_("Small Cover Image"), storage=fs,upload_to=sm_cover_image_upload_path, blank=True, null=True)
+    image = models.ImageField(_("Image"), storage=fs,upload_to=image_upload_path)
+    md_image = models.ImageField(_("Medium Image"), storage=fs,upload_to=md_image_upload_path, blank=True, null=True)
+    sm_image = models.ImageField(_("Small Image"), storage=fs,upload_to=sm_image_upload_path, blank=True, null=True)
 
     def save(self, *args, **kwargs):
         MID_THUMB_SIZE = (768, 1024)
         SM_THUMB_SIZE = (264, 300)
-        if not self.m_cover_image:
-            self.m_cover_image = DynamicImageResize(768, 1024, self.cover_image).get_resize_image()
-        if not self.sm_cover_image:
-            self.sm_cover_image = DynamicImageResize(264, 300, self.cover_image).get_resize_image()
+        if not self.md_image:
+            self.md_image = DynamicImageResize(768, 1024, self.image).get_resize_image()
+        if not self.sm_image:
+            self.sm_image = DynamicImageResize(264, 300, self.image).get_resize_image()
 
         super(Media, self).save(*args, **kwargs)
     
     def __str__(self):
-        return self.cover_image.name
+        return self.image.name
 
 class Category(Base):
     name = models.CharField(max_length=150)

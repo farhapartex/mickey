@@ -9,6 +9,11 @@ class UserMiniSerializer(serializers.ModelSerializer):
         model = USER_MODEL
         fields = ("id", "username",)
 
+# class MediaSerializer(serializers.ModelSerializer):
+#     class Meta:
+#         model = Media
+#         fields = ("id", "")
+
 class CategoryMinimalSerializer(serializers.ModelSerializer):
     parent = serializers.SerializerMethodField()
 
