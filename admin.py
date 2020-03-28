@@ -110,3 +110,17 @@ class CommentAdmin(admin.ModelAdmin):
     list_display = ("id","post", "parent", "name", "active", "created_at")
     fields = (('post','parent'),('name', ), 'body', ('active',))
     list_filter = ('post', 'name', 'active')
+    actions = ['make_activate','make_deactivate',]
+
+
+    def make_activate(self, request, queryset):
+        rows_updated = queryset.update(active=True)
+        self.message_user(request, "%s activated successfully." % get_message_bit(rows_updated,'comment'))
+
+
+    def make_deactivate(self, request, queryset):
+        rows_updated = queryset.update(active=False)
+        self.message_user(request, "%s deactivated successfully." % get_message_bit(rows_updated,'comment'))
+    
+    make_activate.short_description = "Active selected comments"
+    make_deactivate.short_description = "Deactivate selected comments"
