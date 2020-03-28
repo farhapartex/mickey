@@ -66,3 +66,6 @@ class CommentPublicAPIView(viewsets.ModelViewSet):
     queryset = Comment.objects.all()
     serializer_class = CommentSerializer
     permission_classes = (permissions.AllowAny,)
+
+    def get_queryset(self):
+        return Comment.objects.filter(active=True)
