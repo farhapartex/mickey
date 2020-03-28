@@ -41,12 +41,19 @@ class Media(Base):
     sm_image = models.ImageField(_("Small Image"), storage=fs,upload_to=sm_image_upload_path, blank=True, null=True)
 
     def save(self, *args, **kwargs):
-        MID_THUMB_SIZE = (768, 1024)
-        SM_THUMB_SIZE = (264, 300)
+        try:
+            # get image size from settings.py file
+            md_size = settings.MID_IMAGE_SIZE
+            sm_size = settings.SM_IMAGE_SIZE
+        except :
+            # if no size get from settings.py, default size will be this
+            md_size = (768,1024)
+            sm_size = (265, 300)
+
         if not self.md_image:
-            self.md_image = DynamicImageResize(768, 1024, self.image).get_resize_image()
+            self.md_image = DynamicImageResize(md_size, self.image).get_resize_image()
         if not self.sm_image:
-            self.sm_image = DynamicImageResize(264, 300, self.image).get_resize_image()
+            self.sm_image = DynamicImageResize(sm_size, self.image).get_resize_image()
 
         super(Media, self).save(*args, **kwargs)
     

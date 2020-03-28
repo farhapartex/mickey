@@ -9,15 +9,15 @@ logger = logging.getLogger(__name__)
 
 
 class DynamicImageResize(object):
-    def __init__(self, width, height, image_field):
-        self.width = width
-        self.height = height
+    def __init__(self, image_size, image_field):
+        self.width, self.height = image_size
         self.image_field = image_field
     
     
     def get_resize_image(self):
         aspect_ratio = self.image_field.width / float(self.image_field.height)
         new_height = int(self.width / aspect_ratio)
+        
         if new_height < self.height:
             final_width = self.width
             final_height = new_height
