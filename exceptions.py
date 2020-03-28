@@ -3,7 +3,7 @@ from django.utils.encoding import force_text
 from rest_framework import status
 
 
-class CustomException(APIException):
+class SerializerException(APIException):
     status_code = status.HTTP_500_INTERNAL_SERVER_ERROR
     default_detail = 'Service temporarily unavailable, try again later.'
     default_code = 'service_unavailable'

@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db.models import Sum
 from rest_framework import serializers
 from .models import *
+from .exceptions import *
 
 
 class UserMiniSerializer(serializers.ModelSerializer):
@@ -111,16 +112,29 @@ class PostMinimalSerializer(serializers.HyperlinkedModelSerializer):
         }
 
 
+
+class RecursiveSerializer(serializers.Serializer):
+    def to_representation(self, value):
+        serializer = self.parent.parent.__class__(value, context=self.context)
+        return serializer.data
+
+
 class CommentSerializer(serializers.ModelSerializer):
 
-    # def create(self, validated_data):
-    #     validated_data["active"] = True
-    #     parent =  validated_data.get("parent")
-    #     if parent:
-    #         if parent.parent:
+    children = RecursiveSerializer(many=True, read_only=True)
 
-    #     return Comment.objects.create(**validated_data)
+    def create(self, validated_data):
+        validated_data["active"] = True
+        parent =  validated_data.get("parent")
+        post = validated_data.get("post")
+        if parent:
+            if parent.parent:
+                raise SerializerException('Comment creation denied','username',"comment", status_code=status.HTTP_403_FORBIDDEN)
+            if parent.post.id != post.id:
+                raise SerializerException('Comment post & parent post is not same', "comment", status_code=status.HTTP_406_NOT_ACCEPTABLE)
+
+        return Comment.objects.create(**validated_data)
 
     class Meta:
         model = Comment
-        fields = "__all__"
+        fields = ("id", "name", "body", "post","parent", "children", "created_at")

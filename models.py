@@ -129,11 +129,12 @@ class React(Base):
 
 class Comment(models.Model):
     post = models.ForeignKey(Post, verbose_name=_("Post"), related_name="comments", on_delete=models.CASCADE)
-    parent = models.ForeignKey("self", verbose_name=_("Parent Comment"), on_delete=models.CASCADE, blank=True, null=True)
+    parent = models.ForeignKey("self", verbose_name=_("Parent Comment"), related_name="children", on_delete=models.CASCADE, blank=True, null=True)
     name = models.CharField(_("Name"), max_length=50)
     body = models.TextField()
     created_at = models.DateTimeField(auto_now_add=True)
     active = models.BooleanField(default=True)
 
     def __str__(self):
-        return self.name + " comment on" + str(self.post.id)
+        # return self.name + " comment ({0}) on ".format(self.id) + self.post.title[:10]
+        return "id: "+ str(self.id) + " comment: " +self.body[:10]
