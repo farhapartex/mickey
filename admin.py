@@ -1,4 +1,5 @@
 from django.contrib import admin
+from django.utils.html import format_html
 from django.contrib.contenttypes.admin import GenericTabularInline
 from .models import *
 import logging
@@ -23,6 +24,13 @@ def get_message_bit(rows_updated, model_name):
 @admin.register(Media)
 class MediaAdmin(admin.ModelAdmin):
     list_display = ("id", "image","md_image","sm_image", "created_by", "created_at")
+    fields = ( ("image","image_tag"),"md_image","sm_image", )
+    readonly_fields = ('image_tag',)
+
+    def image_tag(self, obj):
+        return format_html('<img src="{}" width="160" height="135"/>'.format(obj.image.url))
+
+    image_tag.short_description = 'Image'
 
 
 @admin.register(Category)

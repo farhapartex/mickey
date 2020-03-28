@@ -57,6 +57,13 @@ class Media(Base):
 
         super(Media, self).save(*args, **kwargs)
     
+    # def image_tag(self):
+    #     from django.utils.html import escape
+    #     return u'<img src="%s" />' % escape(self.image.url)
+
+    # image_tag.short_description = 'Image'
+    # image_tag.allow_tags = True
+    
     def __str__(self):
         return self.image.name
 
