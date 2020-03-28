@@ -85,6 +85,7 @@ class PostAdmin(admin.ModelAdmin):
 class ReactAdmin(admin.ModelAdmin):
     list_display = ("id","blog", "type", "amount",)
     search_fields = ['blog__title', 'type']
+    list_filter = ('blog', 'type',)
 
 
 @admin.register(Comment)
