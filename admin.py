@@ -107,6 +107,6 @@ class ReactAdmin(admin.ModelAdmin):
 
 @admin.register(Comment)
 class CommentAdmin(admin.ModelAdmin):
-    list_display = ("id","post", "parent", "name", "created_at")
+    list_display = ("id","post", "parent", "name", "active", "created_at")
     fields = (('post','parent'),('name', ), 'body', ('active',))
     list_filter = ('post', 'name', 'active')

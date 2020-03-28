@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework import views, viewsets, generics
+from rest_framework import permissions
 from .models import *
 from .serializers import *
 import logging
@@ -59,3 +60,9 @@ class ReactAPIView(viewsets.ModelViewSet):
     
     def get_serializer_class(self):
         return ReactFlatSerializer if self.action == "list" else ReactSerializer
+
+
+class CommentPublicAPIView(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = (permissions.AllowAny,)

@@ -109,3 +109,18 @@ class PostMinimalSerializer(serializers.HyperlinkedModelSerializer):
         extra_kwargs = {
             'url': {'lookup_field': 'slug'},
         }
+
+
+class CommentSerializer(serializers.ModelSerializer):
+
+    # def create(self, validated_data):
+    #     validated_data["active"] = True
+    #     parent =  validated_data.get("parent")
+    #     if parent:
+    #         if parent.parent:
+
+    #     return Comment.objects.create(**validated_data)
+
+    class Meta:
+        model = Comment
+        fields = "__all__"
