@@ -16,13 +16,27 @@ class DynamicImageResize(object):
     
     
     def get_resize_image(self):
-        THUMB_SIZE = (self.width, self.height)
+        aspect_ratio = self.image_field.width / float(self.image_field.height)
+        new_height = int(self.width / aspect_ratio)
+        if new_height < self.height:
+            final_width = self.width
+            final_height = new_height
+        else:
+            final_width = int(aspect_ratio * self.height)
+            final_height = self.height
+
+        THUMB_SIZE = (final_width, final_height)
         image = Image.open(self.image_field)
-        image.resize(THUMB_SIZE)
+
+        exif = None
+        if 'exif' in image.info:
+            exif = image.info['exif']
+
+        image = image.resize(THUMB_SIZE, Image.ANTIALIAS)
         output = BytesIO()
         image_name, image_extension = os.path.splitext(self.image_field.name)
         image_extension = image_extension.lower()
-        image_name = image_name + str(self.width) +"x"+ str(self.height) + image_extension
+        image_name = image_name + str(final_width) +"x"+ str(final_height) + image_extension
 
         if image_extension in ['.jpg', '.jpeg']:
             FTYPE = 'JPEG'
@@ -31,8 +45,13 @@ class DynamicImageResize(object):
         elif image_extension == '.png':
             FTYPE = 'PNG'
         
-        image.save(output, FTYPE, quality=100)
+        if exif:
+            image.save(output, format=FTYPE, exif=exif, quality=90)
+        else:
+            image.save(output, FTYPE, quality=90)
+
         output.seek(0)
-        return InMemoryUploadedFile(output,'ImageField', "%s.jpg" %image_name, 'image/jpeg', sys.getsizeof(output), None)
+
+        return InMemoryUploadedFile(output,'ImageField', image_name, 'image/jpeg', sys.getsizeof(output), None)
 
 
