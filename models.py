@@ -63,7 +63,7 @@ class Media(Base):
 class Category(Base):
     name = models.CharField(max_length=150)
     parent = models.ForeignKey("self", on_delete=models.SET_NULL, blank=True, null=True)
-    status = models.BooleanField(default=True)
+    active = models.BooleanField(default=True)
 
     class Meta:
         verbose_name_plural = "Categories"
@@ -109,7 +109,7 @@ class Post(Base):
         
 
     def __str__(self):
-        return self.title
+        return self.title if len(self.title) < 40 else self.title[:40]
 
 
 REACT_CHOICES = (("like", "like"), ("dislike", "Dislike"), ("love", "Love"), ("angry", "Angry"), ("wow", "Wow"))
@@ -120,6 +120,15 @@ class React(Base):
 
     def __str__(self):
         return self.blog.title
-        
 
 
+class Comment(models.Model):
+    post = models.ForeignKey(Post, verbose_name=_("Post"), related_name="comments", on_delete=models.CASCADE)
+    parent = models.ForeignKey("self", verbose_name=_("Parent Comment"), on_delete=models.CASCADE)
+    name = models.CharField(_("Name"), max_length=50)
+    body = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return self.name + "comment on" + str(self.post.id)
