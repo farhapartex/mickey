@@ -23,25 +23,25 @@ class TagReadOnlyAPIView(viewsets.ReadOnlyModelViewSet):
         return TagMinimalSerializer if self.action == "list" else TagSerializer
 
 
-class BlogPublishedAPIView(viewsets.ReadOnlyModelViewSet):
-    queryset = Blog.objects.all()
-    serializer_class = BlogSerializer
+class PostPublishedAPIView(viewsets.ReadOnlyModelViewSet):
+    queryset = Post.objects.all()
+    serializer_class = PostSerializer
     lookup_field = 'slug'
 
     def get_serializer_class(self):
-        return BlogMinimalSerializer if self.action == "list" else BlogSerializer
+        return PostMinimalSerializer if self.action == "list" else PostSerializer
     
     def get_queryset(self):
         try:
             post_type, query = self.request.GET['type'], None
             if not post_type or post_type == "published":
-                query = Blog.objects.filter(published=True, archive=False)
+                query = Post.objects.filter(published=True, archive=False)
             else:
-                query =  Blog.objects.filter(published=True, archive=True)
+                query =  Post.objects.filter(published=True, archive=True)
             
             return query
         except:
-            return Blog.objects.filter(published=True, archive=False)
+            return Post.objects.filter(published=True, archive=False)
 
 
 class ReactAPIView(viewsets.ModelViewSet):

@@ -78,11 +78,11 @@ class Tag(Base):
     def __str__(self):
         return self.name
 
-class Blog(Base):
+class Post(Base):
     category = models.ForeignKey(Category, verbose_name=_("Category"), related_name="blogs", on_delete=models.CASCADE)
     tags = models.ManyToManyField(Tag, verbose_name=_("Tag"))
     title = models.CharField(_("Title"), max_length=150)
-    slug = models.SlugField(_("Slug"), max_length=180, blank=True, null=True)
+    slug = models.SlugField(_("Slug"), max_length=80, blank=True, null=True)
     content = models.TextField(_("Content"))
     short_content = models.TextField(_("Short Content"), blank=True, null=True)
     cover_image = models.ForeignKey(Media, verbose_name=_("Cover Image"), on_delete=models.SET_NULL, blank=True, null=True)
@@ -91,6 +91,8 @@ class Blog(Base):
 
     def save(self, *args, **kwargs):
         if not self.slug:
+            if len(self.title) > 80:
+                self.slug = self.title[:80]
             self.slug = slugify(self.title)
         else:
             self.slug = slugify(self.slug)
@@ -98,8 +100,8 @@ class Blog(Base):
         if not self.short_content:
             self.short_content = self.content[:150]
 
-        super(Blog, self).save(*args, **kwargs)
-        instance = Blog.objects.get(id=self.id)
+        super(Post, self).save(*args, **kwargs)
+        instance = Post.objects.get(id=self.id)
         REACTS = ['like', 'dislike', 'love', 'angry', 'wow']
         if React.objects.filter(blog=instance).exists() == False:
             for react in REACTS:
@@ -112,7 +114,7 @@ class Blog(Base):
 
 REACT_CHOICES = (("like", "like"), ("dislike", "Dislike"), ("love", "Love"), ("angry", "Angry"), ("wow", "Wow"))
 class React(Base):
-    blog = models.ForeignKey(Blog, related_name="reacts", on_delete=models.CASCADE)
+    blog = models.ForeignKey(Post, related_name="reacts", on_delete=models.CASCADE)
     type = models.CharField(_("React Type"), choices=REACT_CHOICES, max_length=10)
     amount = models.IntegerField()
 

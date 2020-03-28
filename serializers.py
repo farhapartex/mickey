@@ -79,17 +79,17 @@ class ReactFlatSerializer(serializers.ModelSerializer):
         fields = ("id","type", "amount")
 
 
-class BlogSerializer(serializers.ModelSerializer):
+class PostSerializer(serializers.ModelSerializer):
     created_by = UserMiniSerializer(read_only=True)
     updated_by = UserMiniSerializer(read_only=True)
     reacts = ReactMinimalSerializer(read_only=True, many=True)
 
     class Meta:
-        model = Blog
+        model = Post
         fields = "__all__"
         
 
-class BlogMinimalSerializer(serializers.HyperlinkedModelSerializer):
+class PostMinimalSerializer(serializers.HyperlinkedModelSerializer):
     created_by = UserMiniSerializer(read_only=True)
     tags = TagMinimalSerializer(read_only=True, many=True)
     reacts = serializers.SerializerMethodField()
@@ -104,7 +104,7 @@ class BlogMinimalSerializer(serializers.HyperlinkedModelSerializer):
 
 
     class Meta:
-        model = Blog
+        model = Post
         fields = ("id","url","title", "tags","slug", "reacts", "short_content", "cover_image", "created_by", "created_at")
         lookup_field = 'slug'
         extra_kwargs = {

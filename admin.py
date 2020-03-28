@@ -14,8 +14,8 @@ class CategoryAdmin(admin.ModelAdmin):
 class CategoryAdmin(admin.ModelAdmin):
     list_display = ("id", "name", "created_by")
 
-@admin.register(Blog)
-class BlogAdmin(admin.ModelAdmin):
+@admin.register(Post)
+class PostAdmin(admin.ModelAdmin):
     list_display = ("title", "category", "published", "archive", "created_by")
     search_fields = ['title','category__name','published']
 
