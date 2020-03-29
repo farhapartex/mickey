@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from rest_framework import views, viewsets, generics
+from rest_framework import permissions
 from .models import *
 from .serializers import *
 import logging
@@ -36,12 +37,18 @@ class PostPublishedAPIView(viewsets.ReadOnlyModelViewSet):
             post_type, query = self.request.GET['type'], None
             if not post_type or post_type == "published":
                 query = Post.objects.filter(published=True, archive=False)
-            else:
+            elif post_type == "archive":
                 query =  Post.objects.filter(published=True, archive=True)
+
+            if self.request.GET['tag']:
+                query =  query.filter(published=True, tags__name=self.request.GET['tag'])
             
             return query
         except:
-            return Post.objects.filter(published=True, archive=False)
+            query = Post.objects.filter(published=True, archive=False)
+            if self.request.GET['tag']:
+                query =  Post.objects.filter(published=True, tags__name=self.request.GET['tag'])
+            return query
 
 
 class ReactAPIView(viewsets.ModelViewSet):
@@ -59,3 +66,26 @@ class ReactAPIView(viewsets.ModelViewSet):
     
     def get_serializer_class(self):
         return ReactFlatSerializer if self.action == "list" else ReactSerializer
+
+
+class CommentPublicAPIView(viewsets.ModelViewSet):
+    queryset = Comment.objects.all()
+    serializer_class = CommentSerializer
+    permission_classes = (permissions.AllowAny,)
+
+    def get_queryset(self):
+        try:
+            if not self.request.GET['pid']:
+                return Comment.objects.filter(active=True, parent=None)
+            elif Comment.objects.filter(post__id=self.request.GET['pid']).exists():
+                return Comment.objects.filter(post__id=self.request.GET['pid'], active=True, parent=None)
+            else:
+                return Comment.objects.none()
+        except:
+            pass
+        return Comment.objects.filter(active=True, parent=None)
+
+
+class SiteInformationAPIView(viewsets.ReadOnlyModelViewSet):
+    queryset = DJSiteInformation.objects.all()
+    serializer_class = SiteInformationSerializer

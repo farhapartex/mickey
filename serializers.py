@@ -2,6 +2,7 @@ from django.conf import settings
 from django.db.models import Sum
 from rest_framework import serializers
 from .models import *
+from .exceptions import *
 
 
 class UserMiniSerializer(serializers.ModelSerializer):
@@ -93,19 +94,55 @@ class PostSerializer(serializers.ModelSerializer):
 class PostMinimalSerializer(serializers.HyperlinkedModelSerializer):
     created_by = UserMiniSerializer(read_only=True)
     tags = TagMinimalSerializer(read_only=True, many=True)
-    reacts = serializers.SerializerMethodField()
+    total_react = serializers.SerializerMethodField()
+    total_comment = serializers.SerializerMethodField()
     cover_image = MediaFlatSerializer(read_only=True)
 
-    def get_reacts(self, model):
-        return {
-            "total" : React.objects.filter(blog=model).aggregate(Sum('amount'))['amount__sum']
-        }
+    def get_total_react(self, model):
+        return React.objects.filter(blog=model).aggregate(Sum('amount'))['amount__sum']
+    
+    def get_total_comment(self, model):
+        return model.comments.all().count()
 
 
     class Meta:
         model = Post
-        fields = ("id","url","title", "tags","slug", "reacts", "short_content", "cover_image", "created_by", "created_at")
+        fields = ("id","url","title", "tags","slug", "total_react", "total_comment", "short_content", "cover_image", "created_by", "created_at")
         lookup_field = 'slug'
         extra_kwargs = {
             'url': {'lookup_field': 'slug'},
         }
+
+
+
+class RecursiveSerializer(serializers.Serializer):
+    def to_representation(self, value):
+        serializer = self.parent.parent.__class__(value, context=self.context)
+        return serializer.data
+
+
+class CommentSerializer(serializers.ModelSerializer):
+
+    children = RecursiveSerializer(many=True, read_only=True)
+
+    def create(self, validated_data):
+        validated_data["active"] = True
+        parent =  validated_data.get("parent")
+        post = validated_data.get("post")
+        if parent:
+            if parent.parent:
+                raise SerializerException('Comment creation denied','username',"comment", status_code=status.HTTP_403_FORBIDDEN)
+            if parent.post.id != post.id:
+                raise SerializerException('Comment post & parent post is not same', "comment", status_code=status.HTTP_406_NOT_ACCEPTABLE)
+
+        return Comment.objects.create(**validated_data)
+
+    class Meta:
+        model = Comment
+        fields = ("id", "name", "body", "post","parent", "children", "created_at")
+
+
+class SiteInformationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DJSiteInformation
+        fields = ("title", "tagline", "header_title", "footer_text")

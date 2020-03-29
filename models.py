@@ -3,6 +3,7 @@ from django.utils.translation import ugettext_lazy as _
 from django.core.files.uploadedfile import InMemoryUploadedFile
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.forms import ValidationError
 from django.utils.text import slugify
 from PIL import Image
 from io import BytesIO
@@ -14,6 +15,12 @@ import logging, sys
 
 logger = logging.getLogger(__name__)
 USER_MODEL = get_user_model()
+
+"""
+Base model is abstract. It is extended by all other models for some default information such as created_at,
+created_by, updated_at, updated_by
+
+"""
 
 class Base(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
@@ -35,6 +42,13 @@ class Base(models.Model):
     class Meta:
         abstract = True
 
+
+"""
+In Media model, only image is main required field. For a single image, medium and small size image is created 
+dynamically. medium and small image size can be defined from settings.py. By default medium size is (768,1024)
+and small size is (265, 300)
+
+"""
 class Media(Base):
     image = models.ImageField(_("Image"), storage=fs,upload_to=image_upload_path)
     md_image = models.ImageField(_("Medium Image"), storage=fs,upload_to=md_image_upload_path, blank=True, null=True)
@@ -60,10 +74,11 @@ class Media(Base):
     def __str__(self):
         return self.image.name
 
+
 class Category(Base):
     name = models.CharField(max_length=150)
     parent = models.ForeignKey("self", on_delete=models.SET_NULL, blank=True, null=True)
-    status = models.BooleanField(default=True)
+    active = models.BooleanField(default=True)
 
     class Meta:
         verbose_name_plural = "Categories"
@@ -77,6 +92,7 @@ class Tag(Base):
 
     def __str__(self):
         return self.name
+
 
 class Post(Base):
     category = models.ForeignKey(Category, verbose_name=_("Category"), related_name="blogs", on_delete=models.CASCADE)
@@ -102,6 +118,9 @@ class Post(Base):
 
         super(Post, self).save(*args, **kwargs)
         instance = Post.objects.get(id=self.id)
+
+        # creating 5 type of reacts for a post, by default each react of any type will be 0
+
         REACTS = ['like', 'dislike', 'love', 'angry', 'wow']
         if React.objects.filter(blog=instance).exists() == False:
             for react in REACTS:
@@ -109,7 +128,8 @@ class Post(Base):
         
 
     def __str__(self):
-        return self.title
+        return self.title if len(self.title) < 40 else self.title[:40]
+
 
 
 REACT_CHOICES = (("like", "like"), ("dislike", "Dislike"), ("love", "Love"), ("angry", "Angry"), ("wow", "Wow"))
@@ -120,6 +140,35 @@ class React(Base):
 
     def __str__(self):
         return self.blog.title
-        
 
 
+class Comment(models.Model):
+    post = models.ForeignKey(Post, verbose_name=_("Post"), related_name="comments", on_delete=models.CASCADE)
+    parent = models.ForeignKey("self", verbose_name=_("Parent Comment"), related_name="children", on_delete=models.CASCADE, blank=True, null=True)
+    name = models.CharField(_("Name"), max_length=50)
+    body = models.TextField()
+    created_at = models.DateTimeField(auto_now_add=True)
+    active = models.BooleanField(default=True)
+
+    def __str__(self):
+        return "id: "+ str(self.id) + " comment: " +self.body[:10]
+
+
+
+"""
+Blog site information
+"""
+
+class DJSiteInformation(Base):
+    title = models.CharField(_("Site Title"), max_length=50)
+    tagline = models.CharField(_("Tag Line"), max_length=80, blank=True, null=True)
+    header_title = models.CharField(_("Header Title"), max_length=50,blank=True, null=True)
+    footer_text = models.CharField(_("Footer Text"), max_length=150, blank=True, null=True)
+
+    def clean(self):
+        if not self.id:
+            if DJSiteInformation.objects.all().count()==1:
+                raise ValidationError(_("More than one site information can't be created"), code='invalid')
+    
+    class Meta:
+        verbose_name_plural = "DJ Site Information"
