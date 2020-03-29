@@ -24,7 +24,20 @@ def get_message_bit(rows_updated, model_name):
 @admin.register(Media)
 class MediaAdmin(admin.ModelAdmin):
     list_display = ("id", "image","md_image","sm_image", "created_by", "created_at")
-    fields = ( ("image","image_tag"),"md_image","sm_image", )
+    fieldsets = (
+        ("Required Information", {
+            "description": "These fields are required for each Media",
+            "fields": (
+                ('image', 'image_tag'),
+            ),
+        }),
+        ("Optional Information", {
+            'classes': ('collapse',),
+            'fields': (
+                ('md_image','sm_image'),
+            )
+        })
+    )
     readonly_fields = ('image_tag',)
 
     def image_tag(self, obj):
@@ -61,10 +74,28 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    fields = (('category','archive', 'published'),('cover_image','image_tag'),('title', 'slug'),('tags'), 'content','short_content',)
+    
     list_display = ("title", "category", "published", "archive", "created_by", "created_at")
     search_fields = ['title','category__name','published']
     list_filter = ('category__name', 'published', 'archive','created_at')
+    fieldsets = (
+        ("Required Information", {
+            "description": "These fields are required for each post",
+            "fields": (
+                ('category', 'title'), ('content',), ('tags',)
+            ),
+        }),
+        ("Optional Information", {
+            'classes': ('collapse',),
+            'fields': (
+                ('cover_image','image_tag'),
+                ('published','archive',),
+                ('short_content',),
+                ('slug',)
+            )
+        })
+    )
+    
     actions = ['make_archive','remove_archive','publish_post','unpublish_post']
     readonly_fields = ('image_tag',)
 
