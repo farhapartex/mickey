@@ -1,5 +1,6 @@
 from django.contrib import admin
 from django.utils.html import format_html
+from django.contrib import messages
 from django.contrib.contenttypes.admin import GenericTabularInline
 from .models import *
 import logging
@@ -155,3 +156,24 @@ class CommentAdmin(admin.ModelAdmin):
     
     make_activate.short_description = "Active selected comments"
     make_deactivate.short_description = "Deactivate selected comments"
+
+
+@admin.register(DJSiteInformation)
+class DJSiteAdmin(admin.ModelAdmin):
+    list_display = ("title", "tagline", "created_by")
+    fieldsets = (
+        ("Required Information", {
+            "description": "These fields are required for DJ Site Information",
+            "fields": (
+                ('title', ),
+            ),
+        }),
+        ("Optional Information", {
+            'classes': ('collapse',),
+            'fields': (
+                ('header_title','tagline',),
+                'footer_text'
+            )
+        })
+    )
+
