@@ -169,3 +169,6 @@ class DJSiteInformation(Base):
         if not self.id:
             if DJSiteInformation.objects.all().count()==1:
                 raise ValidationError(_("More than one site information can't be created"), code='invalid')
+    
+    class Meta:
+        verbose_name_plural = "DJ Site Information"
