@@ -136,5 +136,4 @@ class Comment(models.Model):
     active = models.BooleanField(default=True)
 
     def __str__(self):
-        # return self.name + " comment ({0}) on ".format(self.id) + self.post.title[:10]
         return "id: "+ str(self.id) + " comment: " +self.body[:10]

@@ -37,12 +37,18 @@ class PostPublishedAPIView(viewsets.ReadOnlyModelViewSet):
             post_type, query = self.request.GET['type'], None
             if not post_type or post_type == "published":
                 query = Post.objects.filter(published=True, archive=False)
-            else:
+            elif post_type == "archive":
                 query =  Post.objects.filter(published=True, archive=True)
+
+            if self.request.GET['tag']:
+                query =  query.filter(published=True, tags__name=self.request.GET['tag'])
             
             return query
         except:
-            return Post.objects.filter(published=True, archive=False)
+            query = Post.objects.filter(published=True, archive=False)
+            if self.request.GET['tag']:
+                query =  Post.objects.filter(published=True, tags__name=self.request.GET['tag'])
+            return query
 
 
 class ReactAPIView(viewsets.ModelViewSet):

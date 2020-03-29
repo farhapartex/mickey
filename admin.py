@@ -61,7 +61,7 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    fields = (('category','archive', 'published'),('cover_image','image_tag'),('title', 'slug'), 'content','short_content',)
+    fields = (('category','archive', 'published'),('cover_image','image_tag'),('title', 'slug'),('tags'), 'content','short_content',)
     list_display = ("title", "category", "published", "archive", "created_by", "created_at")
     search_fields = ['title','category__name','published']
     list_filter = ('category__name', 'published', 'archive','created_at')
