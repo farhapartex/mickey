@@ -68,4 +68,4 @@ class CommentPublicAPIView(viewsets.ModelViewSet):
     permission_classes = (permissions.AllowAny,)
 
     def get_queryset(self):
-        return Comment.objects.filter(active=True)
+        return Comment.objects.filter(active=True, parent=None)

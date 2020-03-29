@@ -123,6 +123,18 @@ class CommentSerializer(serializers.ModelSerializer):
 
     children = RecursiveSerializer(many=True, read_only=True)
 
+    # def to_representation(self, value):
+    #     if value.parent is None:
+    #         {
+    #             "id" : value.id,
+    #             "name" : value.name,
+    #             "body" : value.body,
+    #             "post" : value.post,
+    #             "parent" : value.parent,
+    #             "children" : RecursiveSerializer(value.children, many=True).data,
+    #             "created_at" : value.created_at
+    #         }
+
     def create(self, validated_data):
         validated_data["active"] = True
         parent =  validated_data.get("parent")
