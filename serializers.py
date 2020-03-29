@@ -94,18 +94,20 @@ class PostSerializer(serializers.ModelSerializer):
 class PostMinimalSerializer(serializers.HyperlinkedModelSerializer):
     created_by = UserMiniSerializer(read_only=True)
     tags = TagMinimalSerializer(read_only=True, many=True)
-    reacts = serializers.SerializerMethodField()
+    total_react = serializers.SerializerMethodField()
+    total_comment = serializers.SerializerMethodField()
     cover_image = MediaFlatSerializer(read_only=True)
 
-    def get_reacts(self, model):
-        return {
-            "total" : React.objects.filter(blog=model).aggregate(Sum('amount'))['amount__sum']
-        }
+    def get_total_react(self, model):
+        return React.objects.filter(blog=model).aggregate(Sum('amount'))['amount__sum']
+    
+    def get_total_comment(self, model):
+        return model.comments.all().count()
 
 
     class Meta:
         model = Post
-        fields = ("id","url","title", "tags","slug", "reacts", "short_content", "cover_image", "created_by", "created_at")
+        fields = ("id","url","title", "tags","slug", "total_react", "total_comment", "short_content", "cover_image", "created_by", "created_at")
         lookup_field = 'slug'
         extra_kwargs = {
             'url': {'lookup_field': 'slug'},
@@ -122,18 +124,6 @@ class RecursiveSerializer(serializers.Serializer):
 class CommentSerializer(serializers.ModelSerializer):
 
     children = RecursiveSerializer(many=True, read_only=True)
-
-    # def to_representation(self, value):
-    #     if value.parent is None:
-    #         {
-    #             "id" : value.id,
-    #             "name" : value.name,
-    #             "body" : value.body,
-    #             "post" : value.post,
-    #             "parent" : value.parent,
-    #             "children" : RecursiveSerializer(value.children, many=True).data,
-    #             "created_at" : value.created_at
-    #         }
 
     def create(self, validated_data):
         validated_data["active"] = True
