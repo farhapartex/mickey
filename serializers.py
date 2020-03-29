@@ -140,3 +140,9 @@ class CommentSerializer(serializers.ModelSerializer):
     class Meta:
         model = Comment
         fields = ("id", "name", "body", "post","parent", "children", "created_at")
+
+
+class SiteInformationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DJSiteInformation
+        fields = ("title", "tagline", "header_title", "footer_text")

@@ -84,3 +84,8 @@ class CommentPublicAPIView(viewsets.ModelViewSet):
         except:
             pass
         return Comment.objects.filter(active=True, parent=None)
+
+
+class SiteInformationAPIView(viewsets.ReadOnlyModelViewSet):
+    queryset = DJSiteInformation.objects.all()
+    serializer_class = SiteInformationSerializer
