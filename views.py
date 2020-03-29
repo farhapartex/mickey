@@ -68,4 +68,13 @@ class CommentPublicAPIView(viewsets.ModelViewSet):
     permission_classes = (permissions.AllowAny,)
 
     def get_queryset(self):
+        try:
+            if not self.request.GET['pid']:
+                return Comment.objects.filter(active=True, parent=None)
+            elif Comment.objects.filter(post__id=self.request.GET['pid']).exists():
+                return Comment.objects.filter(post__id=self.request.GET['pid'], active=True, parent=None)
+            else:
+                return Comment.objects.none()
+        except:
+            pass
         return Comment.objects.filter(active=True, parent=None)
