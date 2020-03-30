@@ -37,8 +37,8 @@ Quick start
 
 4. In your project root folder import djBlog urls like as::
 
-    `from django.urls import path, re_path, include`
-    `from djBlog import urls as blog_urls`
+    from django.urls import path, re_path, include
+    from djBlog import urls as blog_urls
 
 5. Include the djBlog URLconf in your project urls.py like this::
 
@@ -51,4 +51,17 @@ Quick start
 8. Start the development server and visit http://127.0.0.1:8000/admin/
    to create a poll (you'll need the Admin app enabled).
 
-9. Visit http://127.0.0.1:8000/polls/ to participate in the poll.
+9. Create Category, Subcategory, Tags, Media files and blog posts from django admin.
+
+10. Public REST APIs endpoints are::
+
+    {
+    "categories": "http://localhost:8000/api/v1/public/categories/",
+    "tags": "http://localhost:8000/api/v1/public/tags/",
+    "posts": "http://localhost:8000/api/v1/public/posts/",
+    "reacts": "http://localhost:8000/api/v1/public/reacts/",
+    "comments": "http://localhost:8000/api/v1/public/comments/",
+    "site-information": "http://localhost:8000/api/v1/public/site-information/"
+    }
+
+11. For any problem create issue or email me at ``hasan08sust@gmail.com``
