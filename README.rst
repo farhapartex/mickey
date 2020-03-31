@@ -62,7 +62,16 @@ Quick start
     'comments':         'http://localhost:8000/api/v1/public/comments/',
     'site-information': 'http://localhost:8000/api/v1/public/site-information/'
 
-11. For any problem create issue or email me at ``hasan08sust@gmail.com``
+
+
+Advance options
+---------------
+
+DJ-Blog provide APIs for public post and archive post. ``/api/v1/public/posts/`` and ``/api/v1/public/posts/?type=published``
+both API endpoints fetch all posts which are published and not archive. ``/api/v1/public/posts/?type=archive`` To make a post 
+archive, mark check box archive in django admin. Remember a archive post is also a published post but in a different scheme. 
+To get all posts for a single tag use the API endpoint ``/api/v1/public/posts/?tag=``
+
 
 In DJ-Blog, image need to choose in time of creation a blog post. Hence there is a media browser named Media. 
 To use any image, first need to upload images from Media. In each time of uploading a single image, DJ-Blog created
