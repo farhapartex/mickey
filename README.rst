@@ -73,5 +73,5 @@ in your setting.py file named `MID_IMAGE_SIZE` and `SM_IMAGE_SIZE` and assign to
 
 Example ::
 
-MID_IMAGE_SIZE = (768, 1024)
-SM_IMAGE_SIZE = (264, 300)
+    MID_IMAGE_SIZE = (768, 1024)
+    SM_IMAGE_SIZE = (264, 300)
