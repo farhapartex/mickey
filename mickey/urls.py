@@ -3,7 +3,7 @@ from django.conf.urls import url
 from django.conf import settings
 from django.conf.urls.static import static
 from rest_framework.routers import DefaultRouter
-from djBlog import views as blog_views
+from mickey import views as blog_views
 
 public_router = DefaultRouter()
 admin_router = DefaultRouter()
