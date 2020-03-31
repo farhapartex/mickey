@@ -83,7 +83,7 @@ To get all posts for a single tag use the API endpoint ``/api/v1/public/posts/?t
 
 
 In Mickey, image need to choose in time of creation a blog post. Hence there is a media browser named Media. 
-To use any image, first need to upload images from Media. In each time of uploading a single image, DJ-Blog created
+To use any image, first need to upload images from Media. In each time of uploading a single image, Mickey created
 extra 2 copy of same image with different size which are mainly medium and small size.
 By default the medium and small size are (768,1024) and (265, 300).
 
