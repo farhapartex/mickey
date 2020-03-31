@@ -1,6 +1,5 @@
-=====
-DJ-Blog
-=====
+## DJ-Blog
+
 
 DJ-Blog is a Django package to create a blog site quickly and easily. DJ-Blog provide severals public REST APIs
 which can be integrated with frontend which are for such as Category List, Tag List, Post List etc.
@@ -63,3 +62,16 @@ Quick start
     'site-information': 'http://localhost:8000/api/v1/public/site-information/'
 
 11. For any problem create issue or email me at ``hasan08sust@gmail.com``
+
+In DJ-Blog, image need to choose in time of creation a blog post. Hence there is a media browser named Media. 
+To use any image, first need to upload images from Media. In each time of uploading a single image, DJ-Blog created
+extra 2 copy of same image with different size which are mainly medium and small size.
+By default the medium and small size are (768,1024) and (265, 300).
+
+But you can override the size from settings.py file which is your root app folder. To change, create two variable
+in your setting.py file named `MID_IMAGE_SIZE` and `SM_IMAGE_SIZE` and assign to them image sizes as a tuple.
+
+Example::
+
+MID_IMAGE_SIZE = (768, 1024)
+SM_IMAGE_SIZE = (264, 300)
