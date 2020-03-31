@@ -11,7 +11,7 @@ setuptools.setup(
     description="A Django app to build complete blog site.",
     long_description=long_description,
     long_description_content_type="text/markdown",
-    url="https://github.com/farhapartex/dblog",
+    url="https://github.com/farhapartex/dj-blog",
     packages=setuptools.find_packages(),
     classifiers=[
         "Programming Language :: Python :: 3",
