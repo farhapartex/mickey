@@ -5,7 +5,7 @@ with open("README.rst", "r") as fh:
 
 setuptools.setup(
     name="dj-blog", # Replace with your own username
-    version="0.0.1",
+    version="0.0.2",
     author="Md Nazmul Hasan",
     author_email="hasan08sust@gmail.com",
     description="A Django app to build complete blog site.",
