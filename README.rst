@@ -55,13 +55,15 @@ Quick start
 
 10. Public REST APIs endpoints are::
 
-    ``{
+    ```
+    {
     "categories": "http://localhost:8000/api/v1/public/categories/",
     "tags": "http://localhost:8000/api/v1/public/tags/",
     "posts": "http://localhost:8000/api/v1/public/posts/",
     "reacts": "http://localhost:8000/api/v1/public/reacts/",
     "comments": "http://localhost:8000/api/v1/public/comments/",
     "site-information": "http://localhost:8000/api/v1/public/site-information/"
-    }``
+    }
+    ```
 
 11. For any problem create issue or email me at ``hasan08sust@gmail.com``
