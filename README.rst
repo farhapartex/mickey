@@ -1,11 +1,20 @@
-DJ-Blog
+Mickey
 -------
 
 
-DJ-Blog is a Django package to create a blog site quickly and easily. DJ-Blog provide severals public REST APIs
+Mickey is a Django package to create a blog site quickly and easily. Mickey provide severals public REST APIs
 which can be integrated with frontend which are for such as Category List, Tag List, Post List etc.
-DJ-Blog also provide a little bit customized Django admin from where user can easily create groups, site information,
+Mickey also provide a little bit customized Django admin from where user can easily create groups, site information,
 category, sub category, blog posts and media images.
+
+Features
+--------
+
+* Add category and Subcategory
+* Add tags 
+* Add images 
+* Add posts (as public/ archive)
+
 
 Below are the detail information to install the app.
 
@@ -15,14 +24,14 @@ Quick start
 1. Install django rest framework first from here https://www.django-rest-framework.org/#installation and 
     add it to INSTALLED_APPS
 
-2. Add "djBlog" to your INSTALLED_APPS setting like this::
+2. Add "mickey" to your INSTALLED_APPS setting like this::
 
     INSTALLED_APPS = [
         ...
-        'djBlog',
+        'mickey',
     ]
 
-3. Add a middleware 'djBlog.middleware.CurrentUserMiddleware' at the very bottom of the MIDDLEWARE list this::
+3. Add a middleware 'mickey.middleware.CurrentUserMiddleware' at the very bottom of the MIDDLEWARE list this::
 
     MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
@@ -32,13 +41,13 @@ Quick start
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'djBlog.middleware.CurrentUserMiddleware'
+    'mickey.middleware.CurrentUserMiddleware'
 ]
 
 4. In your project root folder import djBlog urls like as::
 
     from django.urls import path, re_path, include
-    from djBlog import urls as blog_urls
+    from mickey import urls as blog_urls
 
 5. Include the djBlog URLconf in your project urls.py like this::
 
@@ -67,13 +76,13 @@ Quick start
 Advance options
 ---------------
 
-DJ-Blog provide APIs for public post and archive post. ``/api/v1/public/posts/`` and ``/api/v1/public/posts/?type=published``
+Mickey provide APIs for public post and archive post. ``/api/v1/public/posts/`` and ``/api/v1/public/posts/?type=published``
 both API endpoints fetch all posts which are published and not archive. ``/api/v1/public/posts/?type=archive`` To make a post 
 archive, mark check box archive in django admin. Remember a archive post is also a published post but in a different scheme. 
 To get all posts for a single tag use the API endpoint ``/api/v1/public/posts/?tag=``
 
 
-In DJ-Blog, image need to choose in time of creation a blog post. Hence there is a media browser named Media. 
+In Mickey, image need to choose in time of creation a blog post. Hence there is a media browser named Media. 
 To use any image, first need to upload images from Media. In each time of uploading a single image, DJ-Blog created
 extra 2 copy of same image with different size which are mainly medium and small size.
 By default the medium and small size are (768,1024) and (265, 300).

@@ -4,7 +4,7 @@ with open("README.rst", "r") as fh:
     long_description = fh.read()
 
 setuptools.setup(
-    name="dj-blog", # Replace with your own username
+    name="mickey", # Replace with your own username
     version="0.0.2",
     author="Md Nazmul Hasan",
     author_email="hasan08sust@gmail.com",
