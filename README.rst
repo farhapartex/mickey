@@ -42,27 +42,40 @@ Quick start
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'mickey.middleware.CurrentUserMiddleware'
-]
+    ]
 
-4. In your project root folder import djBlog urls like as::
+4. In your project root folder import mickey urls like as::
 
     from django.urls import path, re_path, include
+    from django.conf.urls import url
+    from django.conf import settings
+    from django.conf.urls.static import static
     from mickey import urls as blog_urls
 
-5. Include the djBlog URLconf in your project urls.py like this::
+5. Include the mickey URLconf in your project urls.py like this::
 
     re_path(r"^api/v1/", include(blog_urls)),
 
-6. Add media url in settings.py file like as :: MEDIA_URL = "/media/"
+6. At the bottom of the urls.py file add this::
 
-7. Run ``python manage.py makemigrations`` and ``python manage.py migrate`` to create all models.
+    if settings.DEBUG:
+        urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+        urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-8. Start the development server and visit http://127.0.0.1:8000/admin/
+7. Add media url in settings.py file like as :: 
+
+    MEDIA_URL = "/media/"
+    MEDIA_ROOT = os.path.join(BASE_DIR, "media/images/")
+    STATIC_ROOT = os.path.join(BASE_DIR, "static")
+
+8. Run ``python manage.py makemigrations`` and ``python manage.py migrate`` to create all models.
+
+9. Start the development server and visit http://127.0.0.1:8000/admin/
    to create a poll (you'll need the Admin app enabled).
 
-9. Create Category, Subcategory, Tags, Media files and blog posts from django admin.
+10. Create Category, Subcategory, Tags, Media files and blog posts from django admin.
 
-10. Public REST APIs endpoints are::
+11. Public REST APIs endpoints are::
 
     'categories':       'http://localhost:8000/api/v1/public/categories/',
     'tags':             'http://localhost:8000/api/v1/public/tags/'
