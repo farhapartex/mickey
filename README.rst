@@ -42,7 +42,7 @@ Quick start
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'mickey.middleware.CurrentUserMiddleware'
-]
+    ]
 
 4. In your project root folder import mickey urls like as::
 
