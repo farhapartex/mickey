@@ -44,16 +44,29 @@ Quick start
     'mickey.middleware.CurrentUserMiddleware'
 ]
 
-4. In your project root folder import djBlog urls like as::
+4. In your project root folder import mickey urls like as::
 
     from django.urls import path, re_path, include
+    from django.conf.urls import url
+    from django.conf import settings
+    from django.conf.urls.static import static
     from mickey import urls as blog_urls
 
-5. Include the djBlog URLconf in your project urls.py like this::
+5. Include the mickey URLconf in your project urls.py like this::
 
     re_path(r"^api/v1/", include(blog_urls)),
 
-6. Add media url in settings.py file like as :: MEDIA_URL = "/media/"
+    at the bottom of the urls.py file add this
+
+    ``if settings.DEBUG:
+        urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+        urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)``
+
+6. Add media url in settings.py file like as :: 
+
+    MEDIA_URL = "/media/"
+    MEDIA_ROOT = os.path.join(BASE_DIR, "media/images/")
+    STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
 7. Run ``python manage.py makemigrations`` and ``python manage.py migrate`` to create all models.
 

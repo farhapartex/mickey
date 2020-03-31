@@ -42,6 +42,7 @@ class MediaAdmin(admin.ModelAdmin):
     readonly_fields = ('image_tag',)
 
     def image_tag(self, obj):
+        logger.critical(obj.image.url)
         return format_html('<img src="{}" width="160" height="135"/>'.format(obj.image.url))
 
     image_tag.short_description = 'Image'
