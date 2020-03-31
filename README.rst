@@ -56,26 +56,26 @@ Quick start
 
     re_path(r"^api/v1/", include(blog_urls)),
 
-    at the bottom of the urls.py file add this
+6. At the bottom of the urls.py file add this::
 
-    ``if settings.DEBUG:
+    if settings.DEBUG:
         urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
-        urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)``
+        urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
 
-6. Add media url in settings.py file like as :: 
+7. Add media url in settings.py file like as :: 
 
     MEDIA_URL = "/media/"
     MEDIA_ROOT = os.path.join(BASE_DIR, "media/images/")
     STATIC_ROOT = os.path.join(BASE_DIR, "static")
 
-7. Run ``python manage.py makemigrations`` and ``python manage.py migrate`` to create all models.
+8. Run ``python manage.py makemigrations`` and ``python manage.py migrate`` to create all models.
 
-8. Start the development server and visit http://127.0.0.1:8000/admin/
+9. Start the development server and visit http://127.0.0.1:8000/admin/
    to create a poll (you'll need the Admin app enabled).
 
-9. Create Category, Subcategory, Tags, Media files and blog posts from django admin.
+10. Create Category, Subcategory, Tags, Media files and blog posts from django admin.
 
-10. Public REST APIs endpoints are::
+11. Public REST APIs endpoints are::
 
     'categories':       'http://localhost:8000/api/v1/public/categories/',
     'tags':             'http://localhost:8000/api/v1/public/tags/'
