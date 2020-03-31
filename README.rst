@@ -71,7 +71,7 @@ By default the medium and small size are (768,1024) and (265, 300).
 But you can override the size from settings.py file which is your root app folder. To change, create two variable
 in your setting.py file named `MID_IMAGE_SIZE` and `SM_IMAGE_SIZE` and assign to them image sizes as a tuple.
 
-Example::
+Example ::
 
 MID_IMAGE_SIZE = (768, 1024)
 SM_IMAGE_SIZE = (264, 300)
