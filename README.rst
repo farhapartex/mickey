@@ -1,4 +1,5 @@
-## DJ-Blog
+DJ-Blog
+-------
 
 
 DJ-Blog is a Django package to create a blog site quickly and easily. DJ-Blog provide severals public REST APIs
