@@ -85,9 +85,9 @@ class CommentPublicAPIView(viewsets.ModelViewSet):
         return Comment.objects.filter(active=True, parent=None)
 
 
-class SiteInformationAPIView(viewsets.ReadOnlyModelViewSet):
+class SiteInformationPublicAPIView(viewsets.ReadOnlyModelViewSet):
     queryset = DJSiteInformation.objects.all()
-    serializer_class = SiteInformationSerializer
+    serializer_class = SiteInformationFlatSerializer
 
 """
 Admin View API
@@ -105,6 +105,17 @@ class GroupAPIView(viewsets.ModelViewSet):
 
     def get_serializer_class(self):
         return GroupMiniSerializer if self.action == "list" else GroupSerializer
+
+
+class SiteInformationAPIView(viewsets.ModelViewSet):
+    queryset = DJSiteInformation.objects.all()
+    serializer_class = SiteInformationSerializer
+    permission_classes = (IsAuthenticated, SiteInformationPermission,)
+
+    def create(self, request, *args, **kwargs):
+        if DJSiteInformation.objects.all().count()>0:
+            return Response({"detail": "More than one information can't be created!"}, status=status.HTTP_403_FORBIDDEN)
+        return super().create(request, *args, **kwargs)
 
 
 class CategoryAPIView(viewsets.ModelViewSet):
