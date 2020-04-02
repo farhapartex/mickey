@@ -154,3 +154,22 @@ class TagAPIView(viewsets.ModelViewSet):
     queryset = Tag.objects.all()
     serializer_class = TagSerializer
     permission_classes = (IsAuthenticated, TagPermission)
+
+
+class MediaAPIView(viewsets.ModelViewSet):
+    queryset = Media.objects.all()
+    serializer_class = MediaSerializer
+    permission_classes = (IsAuthenticated, MediaPermission,)
+
+    def get_serializer_class(self):
+        return MediaFlatSerializer if self.action == "list" else MediaSerializer
+    
+
+    def get_queryset(self):
+        queryset = Media.objects.all()
+        try:
+            if self.request.GET['name']:
+                queryset = queryset.filter(image__contains=self.request.GET['name'])
+            return queryset
+        except:
+            return queryset

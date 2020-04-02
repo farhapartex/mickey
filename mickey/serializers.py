@@ -206,3 +206,58 @@ class TagFlatSerializer(serializers.ModelSerializer):
     class Meta:
         model = Tag
         fields = ("id", "name", "created_by", "created_at")
+
+
+class MediaSerializer(serializers.ModelSerializer):
+    created_by = UserMiniSerializer(read_only=True)
+    updated_by = UserMiniSerializer(read_only=True)
+    md_image = serializers.SerializerMethodField()
+    sm_image = serializers.SerializerMethodField()
+    
+    def get_md_image(self, model):
+        return {
+            "name" : model.image.name.split("/")[1],
+            "url" : model.image.url
+        }
+    
+    def get_sm_image(self, model):
+        return {
+            "name" : model.image.name.split("/")[1],
+            "url" : model.image.url
+        }
+
+    class Meta:
+        model = Media
+        fields = "__all__"
+        extra_kwargs = {
+            "md_image" : {"read_only" : True},
+            "sm_image" : {"read_only" : True}
+        }
+
+
+class MediaFlatSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+    md_image = serializers.SerializerMethodField()
+    sm_image = serializers.SerializerMethodField()
+
+    def get_image(self, model):
+        return {
+            "name" : model.image.name.split("/")[1],
+            "url" : model.image.url
+        }
+    
+    def get_md_image(self, model):
+        return {
+            "name" : model.image.name.split("/")[1],
+            "url" : model.image.url
+        }
+    
+    def get_sm_image(self, model):
+        return {
+            "name" : model.image.name.split("/")[1],
+            "url" : model.image.url
+        }
+
+    class Meta:
+        model = Media
+        fields = ("id", "image", "md_image", "sm_image")
