@@ -123,6 +123,20 @@ class CategoryAPIView(viewsets.ModelViewSet):
             else:
                 category.delete()
                 return Response({"detail" : "Category deleted"}, status=status.HTTP_200_OK)
+    
+    def get_queryset(self):
+        queryset = Category.objects.all()
+
+        try:
+            if self.request.GET['name']:
+                queryset = queryset.filter(name__contains=self.request.GET['name'])
+            
+            if self.request.GET['parent']:
+                queryset = queryset.filter(parent__name__contains=self.request.GET['parent'])
+            
+            return queryset
+        except :
+            return queryset
 
 
 class TagAPIView(viewsets.ModelViewSet):
