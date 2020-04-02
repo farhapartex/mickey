@@ -46,10 +46,6 @@ class CategorySerializer(serializers.ModelSerializer):
             "parent_id" : {"write_only" : True}
         }
 
-class TagSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Tag
-        fields = "__all__"
 
 class TagMinimalSerializer(serializers.ModelSerializer):
     class Meta:
@@ -192,3 +188,15 @@ class CategoryMiniAdminSerializer(serializers.ModelSerializer):
     class Meta:
         model = Category
         fields = ("id", "parent", "name", "total_child")
+
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ("id", "name", "created_by", "created_at")
+
+
+class TagFlatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ("id", "name", "created_by", "created_at")

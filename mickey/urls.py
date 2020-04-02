@@ -19,6 +19,7 @@ public_router.register(r"site-information", blog_views.SiteInformationAPIView)
 admin_router.register(r"permissions", blog_views.PermissionAPIView)
 admin_router.register(r"groups", blog_views.GroupAPIView)
 admin_router.register(r"categories", blog_views.CategoryAPIView)
+admin_router.register(r"tags", blog_views.TagAPIView)
 
 urlpatterns = [
     re_path(r"^public/", include(public_router.urls)),

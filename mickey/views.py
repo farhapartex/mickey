@@ -20,10 +20,7 @@ class CategoryPublicAPIView(viewsets.ReadOnlyModelViewSet):
 
 class TagReadOnlyAPIView(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
-    serializer_class = TagSerializer
-
-    def get_serializer_class(self):
-        return TagMinimalSerializer if self.action == "list" else TagSerializer
+    serializer_class = TagMinimalSerializer
 
 
 class PostPublishedAPIView(viewsets.ReadOnlyModelViewSet):
@@ -126,3 +123,9 @@ class CategoryAPIView(viewsets.ModelViewSet):
             else:
                 category.delete()
                 return Response({"detail" : "Category deleted"}, status=status.HTTP_200_OK)
+
+
+class TagAPIView(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    permission_classes = (IsAuthenticated, TagPermission)

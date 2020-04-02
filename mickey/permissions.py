@@ -42,3 +42,11 @@ class CategoryPermission(permissions.BasePermission):
     
     def has_object_permission(self, request, view, obj):
         return _check_has_permission(request,Category, view)
+
+class TagPermission(permissions.BasePermission):
+    def has_permission(self, request, view):
+        return _check_has_permission(request, Tag, view)
+
+    
+    def has_object_permission(self, request, view, obj):
+        return _check_has_permission(request, Tag, view)
