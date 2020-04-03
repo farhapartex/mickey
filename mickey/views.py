@@ -1,15 +1,17 @@
 from django.shortcuts import render
-from rest_framework import views, viewsets, generics
-from rest_framework import permissions
+from rest_framework import views, viewsets, generics, status
+from rest_framework.permissions import IsAuthenticated
+from rest_framework.response import Response
 from .models import *
 from .serializers import *
+from .permissions import *
 import logging
 # Create your views here.
 
 logger = logging.getLogger(__name__)
 
 
-class CategoryAPIView(viewsets.ReadOnlyModelViewSet):
+class CategoryPublicAPIView(viewsets.ReadOnlyModelViewSet):
     queryset = Category.objects.all()
     serializer_class = CategorySerializer
 
@@ -18,10 +20,7 @@ class CategoryAPIView(viewsets.ReadOnlyModelViewSet):
 
 class TagReadOnlyAPIView(viewsets.ReadOnlyModelViewSet):
     queryset = Tag.objects.all()
-    serializer_class = TagSerializer
-
-    def get_serializer_class(self):
-        return TagMinimalSerializer if self.action == "list" else TagSerializer
+    serializer_class = TagMinimalSerializer
 
 
 class PostPublishedAPIView(viewsets.ReadOnlyModelViewSet):
@@ -46,8 +45,8 @@ class PostPublishedAPIView(viewsets.ReadOnlyModelViewSet):
             return query
         except:
             query = Post.objects.filter(published=True, archive=False)
-            if self.request.GET['tag']:
-                query =  Post.objects.filter(published=True, tags__name=self.request.GET['tag'])
+            # if self.request.GET['tag']:
+            #     query =  Post.objects.filter(published=True, tags__name=self.request.GET['tag'])
             return query
 
 
@@ -86,6 +85,91 @@ class CommentPublicAPIView(viewsets.ModelViewSet):
         return Comment.objects.filter(active=True, parent=None)
 
 
-class SiteInformationAPIView(viewsets.ReadOnlyModelViewSet):
+class SiteInformationPublicAPIView(viewsets.ReadOnlyModelViewSet):
+    queryset = DJSiteInformation.objects.all()
+    serializer_class = SiteInformationFlatSerializer
+
+"""
+Admin View API
+"""
+
+class PermissionAPIView(viewsets.ReadOnlyModelViewSet):
+    queryset = Permission.objects.all()
+    serializer_class = PermissionSerializer
+    permission_classes = (IsAuthenticated, SystemPermission,)
+
+class GroupAPIView(viewsets.ModelViewSet):
+    queryset = Group.objects.all()
+    serializer_class = GroupSerializer
+    permission_classes = (IsAuthenticated, GroupPermission,)
+
+    def get_serializer_class(self):
+        return GroupMiniSerializer if self.action == "list" else GroupSerializer
+
+
+class SiteInformationAPIView(viewsets.ModelViewSet):
     queryset = DJSiteInformation.objects.all()
     serializer_class = SiteInformationSerializer
+    permission_classes = (IsAuthenticated, SiteInformationPermission,)
+
+    def create(self, request, *args, **kwargs):
+        if DJSiteInformation.objects.all().count()>0:
+            return Response({"detail": "More than one information can't be created!"}, status=status.HTTP_403_FORBIDDEN)
+        return super().create(request, *args, **kwargs)
+
+
+class CategoryAPIView(viewsets.ModelViewSet):
+    queryset = Category.objects.all()
+    serializer_class = CategoryAdminSerializer
+    permission_classes = (IsAuthenticated, CategoryPermission,)
+
+    def get_serializer_class(self):
+        return CategoryMiniAdminSerializer if self.action == "list" else CategoryAdminSerializer
+
+    def destroy(self, request, pk=None):
+        if pk is not None:
+            category = Category.objects.get(id=pk)
+            if category.cat_children.all().count() > 0:
+                return Response({"detail": "Category can't be deleted!"}, status=status.HTTP_403_FORBIDDEN)
+            else:
+                category.delete()
+                return Response({"detail" : "Category deleted"}, status=status.HTTP_200_OK)
+    
+    def get_queryset(self):
+        queryset = Category.objects.all()
+
+        try:
+            if self.request.GET['name']:
+                queryset = queryset.filter(name__contains=self.request.GET['name'])
+            
+            if self.request.GET['parent']:
+                queryset = queryset.filter(parent__name__contains=self.request.GET['parent'])
+            
+            return queryset
+        except :
+            return queryset
+
+
+class TagAPIView(viewsets.ModelViewSet):
+    queryset = Tag.objects.all()
+    serializer_class = TagSerializer
+    permission_classes = (IsAuthenticated, TagPermission)
+
+
+class MediaAPIView(viewsets.ModelViewSet):
+    queryset = Media.objects.all()
+    serializer_class = MediaSerializer
+    permission_classes = (IsAuthenticated, MediaPermission,)
+
+    def get_serializer_class(self):
+        return MediaFlatSerializer if self.action == "list" else MediaSerializer
+    
+
+    def get_queryset(self):
+        queryset = Media.objects.all()
+        try:
+            if self.request.GET['name']:
+                queryset = queryset.filter(image__contains=self.request.GET['name'])
+            return queryset
+        except:
+            return queryset

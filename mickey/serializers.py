@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.db.models import Sum
+from django.contrib.auth.models import Group, Permission
 from rest_framework import serializers
 from .models import *
 from .exceptions import *
@@ -33,6 +34,11 @@ class CategoryMinimalSerializer(serializers.ModelSerializer):
 class CategorySerializer(serializers.ModelSerializer):
     parent = CategoryMinimalSerializer(read_only=True)
     parent_id = serializers.PrimaryKeyRelatedField(source="parent", queryset=Category.objects.all(), write_only=True)
+
+    def create(self, validated_data):
+        validated_data['active'] = True
+        return Category.objects.create(**validated_data)
+
     class Meta:
         model = Category
         fields = "__all__"
@@ -40,10 +46,6 @@ class CategorySerializer(serializers.ModelSerializer):
             "parent_id" : {"write_only" : True}
         }
 
-class TagSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = Tag
-        fields = "__all__"
 
 class TagMinimalSerializer(serializers.ModelSerializer):
     class Meta:
@@ -142,7 +144,120 @@ class CommentSerializer(serializers.ModelSerializer):
         fields = ("id", "name", "body", "post","parent", "children", "created_at")
 
 
-class SiteInformationSerializer(serializers.ModelSerializer):
+class SiteInformationFlatSerializer(serializers.ModelSerializer):
     class Meta:
         model = DJSiteInformation
         fields = ("title", "tagline", "header_title", "footer_text")
+
+
+
+# Private/ admin API serializer
+
+class PermissionSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Permission
+        fields = "__all__"
+
+class GroupSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Group
+        fields = "__all__"
+
+class GroupMiniSerializer(serializers.ModelSerializer):
+    total_permission = serializers.SerializerMethodField()
+
+    def get_total_permission(self, model):
+        return model.permissions.all().count()
+
+    class Meta:
+        model = Group
+        fields = ("id", "name", "total_permission")
+
+
+class SiteInformationSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = DJSiteInformation
+        fields = "__all__"
+
+class CategoryAdminSerializer(serializers.ModelSerializer):
+
+    class Meta:
+        model = Category
+        fields = "__all__"
+
+class CategoryMiniAdminSerializer(serializers.ModelSerializer):
+    total_child = serializers.SerializerMethodField()
+
+    def get_total_child(self, model):
+        return model.cat_children.all().count()
+
+    class Meta:
+        model = Category
+        fields = ("id", "parent", "name", "total_child")
+
+
+class TagSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ("id", "name", "created_by", "created_at")
+
+
+class TagFlatSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = Tag
+        fields = ("id", "name", "created_by", "created_at")
+
+
+class MediaSerializer(serializers.ModelSerializer):
+    created_by = UserMiniSerializer(read_only=True)
+    updated_by = UserMiniSerializer(read_only=True)
+    md_image = serializers.SerializerMethodField()
+    sm_image = serializers.SerializerMethodField()
+    
+    def get_md_image(self, model):
+        return {
+            "name" : model.image.name.split("/")[1],
+            "url" : model.image.url
+        }
+    
+    def get_sm_image(self, model):
+        return {
+            "name" : model.image.name.split("/")[1],
+            "url" : model.image.url
+        }
+
+    class Meta:
+        model = Media
+        fields = "__all__"
+        extra_kwargs = {
+            "md_image" : {"read_only" : True},
+            "sm_image" : {"read_only" : True}
+        }
+
+
+class MediaFlatSerializer(serializers.ModelSerializer):
+    image = serializers.SerializerMethodField()
+    md_image = serializers.SerializerMethodField()
+    sm_image = serializers.SerializerMethodField()
+
+    def get_image(self, model):
+        return {
+            "name" : model.image.name.split("/")[1],
+            "url" : model.image.url
+        }
+    
+    def get_md_image(self, model):
+        return {
+            "name" : model.image.name.split("/")[1],
+            "url" : model.image.url
+        }
+    
+    def get_sm_image(self, model):
+        return {
+            "name" : model.image.name.split("/")[1],
+            "url" : model.image.url
+        }
+
+    class Meta:
+        model = Media
+        fields = ("id", "image", "md_image", "sm_image")

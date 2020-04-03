@@ -77,7 +77,7 @@ class Media(Base):
 
 class Category(Base):
     name = models.CharField(max_length=150)
-    parent = models.ForeignKey("self", on_delete=models.SET_NULL, blank=True, null=True)
+    parent = models.ForeignKey("self",related_name="cat_children", on_delete=models.SET_NULL, blank=True, null=True)
     active = models.BooleanField(default=True)
 
     class Meta:
