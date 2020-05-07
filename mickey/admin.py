@@ -159,7 +159,7 @@ class CommentAdmin(admin.ModelAdmin):
     make_deactivate.short_description = "Deactivate selected comments"
 
 
-@admin.register(DJSiteInformation)
+@admin.register(SiteInformation)
 class DJSiteAdmin(admin.ModelAdmin):
     list_display = ("title", "tagline", "created_by")
     fieldsets = (

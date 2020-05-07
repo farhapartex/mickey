@@ -54,11 +54,11 @@ class TagPermission(permissions.BasePermission):
 
 class SiteInformationPermission(permissions.BasePermission):
     def has_permission(self, request, view):
-        return _check_has_permission(request, DJSiteInformation, view)
+        return _check_has_permission(request, SiteInformation, view)
 
     
     def has_object_permission(self, request, view, obj):
-        return _check_has_permission(request, DJSiteInformation, view)
+        return _check_has_permission(request, SiteInformation, view)
 
 
 class MediaPermission(permissions.BasePermission):

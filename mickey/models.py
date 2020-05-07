@@ -159,7 +159,7 @@ class Comment(models.Model):
 Blog site information
 """
 
-class DJSiteInformation(Base):
+class SiteInformation(Base):
     title = models.CharField(_("Site Title"), max_length=50)
     tagline = models.CharField(_("Tag Line"), max_length=80, blank=True, null=True)
     header_title = models.CharField(_("Header Title"), max_length=50,blank=True, null=True)
@@ -171,4 +171,4 @@ class DJSiteInformation(Base):
                 raise ValidationError(_("More than one site information can't be created"), code='invalid')
     
     class Meta:
-        verbose_name_plural = "DJ Site Information"
+        verbose_name_plural = "Site Information"

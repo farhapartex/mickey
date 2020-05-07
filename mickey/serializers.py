@@ -146,7 +146,7 @@ class CommentSerializer(serializers.ModelSerializer):
 
 class SiteInformationFlatSerializer(serializers.ModelSerializer):
     class Meta:
-        model = DJSiteInformation
+        model = SiteInformation
         fields = ("title", "tagline", "header_title", "footer_text")
 
 
@@ -176,7 +176,7 @@ class GroupMiniSerializer(serializers.ModelSerializer):
 
 class SiteInformationSerializer(serializers.ModelSerializer):
     class Meta:
-        model = DJSiteInformation
+        model = SiteInformation
         fields = "__all__"
 
 class CategoryAdminSerializer(serializers.ModelSerializer):

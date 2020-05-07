@@ -86,7 +86,7 @@ class CommentPublicAPIView(viewsets.ModelViewSet):
 
 
 class SiteInformationPublicAPIView(viewsets.ReadOnlyModelViewSet):
-    queryset = DJSiteInformation.objects.all()
+    queryset = SiteInformation.objects.all()
     serializer_class = SiteInformationFlatSerializer
 
 """
@@ -108,7 +108,7 @@ class GroupAPIView(viewsets.ModelViewSet):
 
 
 class SiteInformationAPIView(viewsets.ModelViewSet):
-    queryset = DJSiteInformation.objects.all()
+    queryset = SiteInformation.objects.all()
     serializer_class = SiteInformationSerializer
     permission_classes = (IsAuthenticated, SiteInformationPermission,)
 
