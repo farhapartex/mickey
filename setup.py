@@ -5,10 +5,10 @@ with open("README.rst", "r") as fh:
 
 setuptools.setup(
     name="mickey", # Replace with your own username
-    version="0.0.3",
+    version="0.0.4",
     author="Md Nazmul Hasan",
     author_email="hasan08sust@gmail.com",
-    description="A Django app to build complete blog site.",
+    description="A Django package to build complete blog site.",
     long_description=long_description,
     long_description_content_type="text/markdown",
     url="https://github.com/farhapartex/mickey",
