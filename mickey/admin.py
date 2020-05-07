@@ -2,7 +2,8 @@ from django.contrib import admin
 from django.utils.html import format_html
 from django.contrib import messages
 from django.contrib.contenttypes.admin import GenericTabularInline
-from .models import *
+from mickey.models import *
+from mickey.widgets import *
 import logging
 
 logger = logging.getLogger(__name__)
@@ -22,6 +23,16 @@ def get_message_bit(rows_updated, model_name):
     return message_bit
 
 
+class PostAdminForm(forms.ModelForm):
+    model = Post
+    class Meta:
+        fields = '__all__'
+        widgets = {
+            'content': HtmlEditor(attrs={'style': 'width: 90%; height: 100%;'}),
+            'short_content': HtmlEditor(attrs={'style': 'width: 90%; height: 100%;'}),
+        }
+        
+        
 @admin.register(Media)
 class MediaAdmin(admin.ModelAdmin):
     list_display = ("id", "image","md_image","sm_image", "created_by", "created_at")
@@ -76,7 +87,7 @@ class TagAdmin(admin.ModelAdmin):
 
 @admin.register(Post)
 class PostAdmin(admin.ModelAdmin):
-    
+    form = PostAdminForm
     list_display = ("title", "category", "published", "archive", "created_by", "created_at")
     search_fields = ['title','category__name','published']
     list_filter = ('category__name', 'published', 'archive','created_at')
