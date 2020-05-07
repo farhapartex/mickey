@@ -1,8 +1,8 @@
 [metadata]
 name = dj-blog
-version = 0.1
+version = 0.0.4
 description = A Django app to build complete blog site.
-long_description = file: README.rst
+long_description = file: README.md
 url = https://nazmulhasan.me/
 author = Md Nazmul Hasan
 author_email = hasan08sust@gmail.com
