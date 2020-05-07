@@ -5,7 +5,7 @@ with open("README.md", "r") as fh:
 
 setuptools.setup(
     name="mickey", # Replace with your own username
-    version="0.0.4",
+    version="0.0.5",
     author="Md Nazmul Hasan",
     author_email="hasan08sust@gmail.com",
     description="A Django package to build complete blog site.",
