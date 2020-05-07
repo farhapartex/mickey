@@ -1,33 +1,26 @@
-Mickey
--------
-
+# Mickey
 
 Mickey is a Django package to create a blog site quickly and easily. Mickey provide severals public REST APIs
 which can be integrated with frontend which are for such as Category List, Tag List, Post List etc.
 Mickey also provide a little bit customized Django admin from where user can easily create groups, site information,
 category, sub category, blog posts and media images.
 
-Features
---------
-
+## Features
 * Add category and Subcategory
 * Add tags 
 * Add images 
 * Add posts (as public/ archive)
 
 
-Below are the detail information to install the app.
+## Quick start
 
-Quick start
------------
+1. Install `django rest framework` and `Pillow`
 
-1. Install django rest framework first from here https://www.django-rest-framework.org/#installation and 
-    add it to INSTALLED_APPS
-
-2. Add "mickey" to your INSTALLED_APPS setting like this::
+2. Add "rest_framework" and "mickey" to your INSTALLED_APPS setting like this::
 
     INSTALLED_APPS = [
         ...
+        'rest_framework',
         'mickey',
     ]
 
@@ -86,8 +79,7 @@ Quick start
 
 
 
-Advance options
----------------
+## Advance options
 
 Mickey provide APIs for public post and archive post. ``/api/v1/public/posts/`` and ``/api/v1/public/posts/?type=published``
 both API endpoints fetch all posts which are published and not archive. ``/api/v1/public/posts/?type=archive`` To make a post 
@@ -104,6 +96,7 @@ But you can override the size from settings.py file which is your root app folde
 in your setting.py file named `MID_IMAGE_SIZE` and `SM_IMAGE_SIZE` and assign to them image sizes as a tuple.
 
 Example ::
-
+```
     MID_IMAGE_SIZE = (768, 1024)
     SM_IMAGE_SIZE = (264, 300)
+```
