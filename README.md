@@ -17,15 +17,16 @@ category, sub category, blog posts and media images.
 1. Install `django rest framework` and `Pillow`
 
 2. Add "rest_framework" and "mickey" to your INSTALLED_APPS setting like this::
-
+```
     INSTALLED_APPS = [
         ...
         'rest_framework',
         'mickey',
     ]
+```
 
 3. Add a middleware 'mickey.middleware.CurrentUserMiddleware' at the very bottom of the MIDDLEWARE list this::
-
+```
     MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
@@ -36,30 +37,35 @@ category, sub category, blog posts and media images.
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     'mickey.middleware.CurrentUserMiddleware'
     ]
+```
 
 4. In your project root folder import mickey urls like as::
-
+```
     from django.urls import path, re_path, include
     from django.conf.urls import url
     from django.conf import settings
     from django.conf.urls.static import static
     from mickey import urls as blog_urls
+```
 
 5. Include the mickey URLconf in your project urls.py like this::
-
+```
     re_path(r"^api/v1/", include(blog_urls)),
+```
 
 6. At the bottom of the urls.py file add this::
-
+```
     if settings.DEBUG:
         urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
         urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+```
 
 7. Add media url in settings.py file like as :: 
-
+```
     MEDIA_URL = "/media/"
     MEDIA_ROOT = os.path.join(BASE_DIR, "media/images/")
     STATIC_ROOT = os.path.join(BASE_DIR, "static")
+```
 
 8. Run ``python manage.py makemigrations`` and ``python manage.py migrate`` to create all models.
 
@@ -69,14 +75,14 @@ category, sub category, blog posts and media images.
 10. Create Category, Subcategory, Tags, Media files and blog posts from django admin.
 
 11. Public REST APIs endpoints are::
-
+```
     'categories':       'http://localhost:8000/api/v1/public/categories/',
     'tags':             'http://localhost:8000/api/v1/public/tags/'
     'posts':            'http://localhost:8000/api/v1/public/posts/',
     'reacts':           'http://localhost:8000/api/v1/public/reacts/',
     'comments':         'http://localhost:8000/api/v1/public/comments/',
     'site-information': 'http://localhost:8000/api/v1/public/site-information/'
-
+```
 
 
 ## Advance options
